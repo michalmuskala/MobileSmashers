@@ -12,42 +12,40 @@ public class Player {
     private Point position;
     private final int speed;
 
-    public Player(Point position)
-    {
+    public Player(Point position) {
         speed = 3;
         this.image = new Texture("badlogic.jpg");
         this.position = position;
     }
 
-    public Point getPosition()
-    {
+    public Point getPosition() {
         return position;
     }
-    public Texture getImage()
-    {
+
+    public Texture getImage() {
         return image;
     }
 
-    public void move()
-    {
+    public void move() {
+        //check for collision
         float accelX = Gdx.input.getAccelerometerX();
         float accelY = Gdx.input.getAccelerometerY();
 
         //go right
-        if (accelX < -2 && position.y + Player.HEIGHT < Board.RIGHT_BOUND){
-            position.y+=speed;
+        if (accelX < -2 && position.y + Player.HEIGHT < Board.RIGHT_BOUND) {
+            position.y += speed;
         }
         //go left
-        if (accelX > +2 && position.y> Board.LEFT_BOUND){
-            position.y-=speed;
+        if (accelX > +2 && position.y > Board.LEFT_BOUND) {
+            position.y -= speed;
         }
         //go up
-        if (accelY < -2 && position.x > Board.UP_BOUND){
-            position.x-=speed;
+        if (accelY < -2 && position.x > Board.UP_BOUND) {
+            position.x -= speed;
         }
         //go down
-        if (accelY > +2 && position.x + Player.WIDTH < Board.BOTTOM_BOUND){
-            position.x+=speed;
+        if (accelY > +2 && position.x + Player.WIDTH < Board.BOTTOM_BOUND) {
+            position.x += speed;
         }
     }
 

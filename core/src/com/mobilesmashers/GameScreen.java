@@ -9,25 +9,23 @@ public class GameScreen extends ScreenAdapter {
     private MobileSmashers game;
     private World world;
 
-    public GameScreen(MobileSmashers game)
-    {
+
+    public GameScreen(MobileSmashers game) {
         this.game = game;
         world = new World();
         worldRenderer = new WorldRenderer(game.batch, world);
     }
 
-    private void draw()
-    {
+    private void draw() {
         worldRenderer.render();
     }
 
-    private void update()
-    {
+    private void update() {
         world.update();
     }
 
     @Override
-    public void render (float delta) {
+    public void render(float delta) {
         update();
         draw();
     }
