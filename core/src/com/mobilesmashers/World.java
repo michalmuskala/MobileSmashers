@@ -9,7 +9,7 @@ public class World {
 
     public World() {
         this.player = new Player(new Point(Board.WIDTH / 2 - Player.WIDTH + 1, Board.HEIGHT / 2 - Player.HEIGHT + 1));
-        this.ball = new Ball(new Point(1, 1));
+        this.ball = new Ball(new Point(0, 0));
     }
 
     public void update() {

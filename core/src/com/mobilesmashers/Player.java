@@ -10,10 +10,10 @@ public class Player {
     //maybe get all images to separate file?
     private final Texture image;
     private Point position;
-    private final int speed;
+    private final int SPEED;
 
     public Player(Point position) {
-        speed = 3;
+        SPEED = 3;
         this.image = new Texture("badlogic.jpg");
         this.position = position;
     }
@@ -33,19 +33,19 @@ public class Player {
 
         //go right
         if (accelX < -2 && position.y + Player.HEIGHT < Board.RIGHT_BOUND) {
-            position.y += speed;
+            position.y += SPEED;
         }
         //go left
         if (accelX > +2 && position.y > Board.LEFT_BOUND) {
-            position.y -= speed;
+            position.y -= SPEED;
         }
         //go up
         if (accelY < -2 && position.x > Board.UP_BOUND) {
-            position.x -= speed;
+            position.x -= SPEED;
         }
         //go down
         if (accelY > +2 && position.x + Player.WIDTH < Board.BOTTOM_BOUND) {
-            position.x += speed;
+            position.x += SPEED;
         }
     }
 

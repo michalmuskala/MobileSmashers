@@ -2,6 +2,7 @@ package com.mobilesmashers;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.mobilesmashers.HelpClasses.Point;
+import com.mobilesmashers.HelpClasses.Strings;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,18 +10,17 @@ import java.util.List;
 import java.util.Random;
 
 public class Ball {
-    public static final int WIDTH = 60;
-    public static final int HEIGHT = 60;
+    public static final int WIDTH = 80;
+    public static final int HEIGHT = 80;
     //maybe get all images to separate file?
     private final Texture image;
-    //create position from 1,1 to Board.WIDTH-1, Board.HEIGHT-1
     private Point position;
-    private final int speed;
+    private final int SPEED;
     private String currentDirection;
     private HashMap<String, Point> directions;
 
     public Ball(Point position) {
-        speed = 1;
+        SPEED = 1;
         this.image = new Texture("badlogic.jpg");
         this.position = position;
         directions = new HashMap<String, Point>();
@@ -40,36 +40,54 @@ public class Ball {
         //check for collision
         //from left to right
         if (position.y + HEIGHT == Board.RIGHT_BOUND) {
-            if (currentDirection.equals("DOWN_RIGHT")) {
-                currentDirection = "DOWN_LEFT";
+            if (currentDirection.equals(Strings.DOWN_RIGHT_DIRECTION)) {
+                currentDirection = Strings.DOWN_LEFT_DIRECTION;
             } else {
-                currentDirection = "UP_LEFT";
+                currentDirection = Strings.UP_LEFT_DIRECTION;
             }
         }
         //from right to left
-        if (position.y ==  Board.LEFT_BOUND){
-            if (currentDirection.equals("DOWN_LEFT")) {
-                currentDirection = "DOWN_RIGHT";
+        if (position.y == Board.LEFT_BOUND) {
+            if (currentDirection.equals(Strings.DOWN_LEFT_DIRECTION)) {
+                currentDirection = Strings.DOWN_RIGHT_DIRECTION;
             } else {
-                currentDirection = "UP_RIGHT";
+                currentDirection = Strings.UP_RIGHT_DIRECTION;
             }
         }
         //from up to down
         if (position.x + WIDTH == Board.BOTTOM_BOUND) {
-            if (currentDirection.equals("DOWN_RIGHT")) {
-                currentDirection = "UP_RIGHT";
+            if (currentDirection.equals(Strings.DOWN_RIGHT_DIRECTION)) {
+                currentDirection = Strings.UP_RIGHT_DIRECTION;
             } else {
-                currentDirection = "UP_LEFT";
+                currentDirection = Strings.UP_LEFT_DIRECTION;
             }
         }
         //from down to up
         if (position.x == Board.UP_BOUND) {
-            if (currentDirection.equals("UP_RIGHT")) {
-                currentDirection = "DOWN_RIGHT";
+            if (currentDirection.equals(Strings.UP_RIGHT_DIRECTION)) {
+                currentDirection = Strings.DOWN_RIGHT_DIRECTION;
             } else {
-                currentDirection = "DOWN_LEFT";
+                currentDirection = Strings.DOWN_LEFT_DIRECTION;
             }
         }
+
+        //0,0
+        if (position.x == Board.UP_BOUND && position.y == Board.LEFT_BOUND) {
+            currentDirection = Strings.DOWN_RIGHT_DIRECTION;
+        }
+        //0,width
+        if (position.x == Board.UP_BOUND && position.y == Board.RIGHT_BOUND) {
+            currentDirection = Strings.DOWN_LEFT_DIRECTION;
+        }
+        //height, 0
+        if (position.x == Board.BOTTOM_BOUND && position.y == Board.LEFT_BOUND) {
+            currentDirection = Strings.UP_RIGHT_DIRECTION;
+        }
+        //height, width
+        if (position.x == Board.BOTTOM_BOUND && position.y == Board.RIGHT_BOUND) {
+            currentDirection = Strings.UP_LEFT_DIRECTION;
+        }
+
         applyDirection(currentDirection);
     }
 
@@ -85,9 +103,9 @@ public class Ball {
     }
 
     private void addDirections() {
-        directions.put("DOWN_LEFT", new Point(speed, -speed));
-        directions.put("DOWN_RIGHT", new Point(speed, speed));
-        directions.put("UP_LEFT", new Point(-speed, -speed));
-        directions.put("UP_RIGHT", new Point(-speed, speed));
+        directions.put(Strings.DOWN_LEFT_DIRECTION, new Point(SPEED, -SPEED));
+        directions.put(Strings.DOWN_RIGHT_DIRECTION, new Point(SPEED, SPEED));
+        directions.put(Strings.UP_LEFT_DIRECTION, new Point(-SPEED, -SPEED));
+        directions.put(Strings.UP_RIGHT_DIRECTION, new Point(-SPEED, SPEED));
     }
 }
