@@ -20,6 +20,7 @@ public class World {
     public void update() {
         updatePlayer();
         updateBalls();
+
     }
 
     private void updatePlayer() {

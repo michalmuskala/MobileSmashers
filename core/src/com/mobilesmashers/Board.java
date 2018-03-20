@@ -9,5 +9,5 @@ public class Board {
     public static final int RIGHT_BOUND = Gdx.graphics.getHeight();
     public static final int WIDTH = Gdx.graphics.getWidth();
     public static final int HEIGHT = Gdx.graphics.getHeight();
-    public static final int LEVEL = 1;
+    public static int LEVEL = 1;
 }

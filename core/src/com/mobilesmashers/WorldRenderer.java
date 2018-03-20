@@ -2,7 +2,6 @@ package com.mobilesmashers;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-
 public class WorldRenderer {
     private SpriteBatch batch;
     private World world;
