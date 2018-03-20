@@ -15,7 +15,7 @@ public class WorldRenderer {
         batch.begin();
 
         renderPlayer();
-        renderBall();
+        renderBalls();
 
         batch.end();
     }
@@ -24,7 +24,9 @@ public class WorldRenderer {
         batch.draw(world.player.getImage(), world.player.getPosition().x, world.player.getPosition().y, Player.WIDTH, Player.HEIGHT);
     }
 
-    private void renderBall() {
-        batch.draw(world.ball.getImage(), world.ball.getPosition().x, world.ball.getPosition().y, Ball.WIDTH, Ball.HEIGHT);
+    private void renderBalls() {
+        for (int i = 0; i < Board.LEVEL * 2; i++) {
+            batch.draw(world.balls[i].getImage(), world.balls[i].getPosition().x, world.balls[i].getPosition().y, Ball.WIDTH, Ball.HEIGHT);
+        }
     }
 }
