@@ -18,6 +18,7 @@ public class Ball {
     private final int SPEED;
     private String currentDirection;
     private HashMap<String, Point> directions;
+    public boolean stopped = false;
 
     public Ball(Point position) {
         SPEED = 1;
@@ -89,6 +90,20 @@ public class Ball {
         }
 
         applyDirection(currentDirection);
+    }
+
+    public void moveToPoint(Point point) {
+        if (position.x > point.x) {
+            position.x--;
+        } else if (position.x < point.x) {
+            position.x++;
+        }
+
+        if (position.y > point.y) {
+            position.y--;
+        } else if (position.y < point.y) {
+            position.y++;
+        }
     }
 
     private void applyDirection(String direction) {
