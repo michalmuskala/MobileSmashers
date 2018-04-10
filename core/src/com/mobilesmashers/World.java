@@ -38,12 +38,13 @@ public class World implements InputProcessor {
 
     private void updateBalls() {
         for (int i = 0; i < balls.size(); i++) {
-            if (!balls.get(i).stopped) {
+            if (!balls.get(i).catched) {
                 balls.get(i).move();
             } else {
                 Point point = new Point((firstTouchedBall.getPosition().x + secondTouchedBall.getPosition().x) / 2, (firstTouchedBall.getPosition().y + secondTouchedBall.getPosition().y) / 2);
                 if (balls.get(i).getPosition().x == point.x && balls.get(i).getPosition().y == point.y) {
                     //check if balls tasks are correct linked
+                    //if(TaskValidator.isTasksCorrect(firstTouchedBall.task, secondTouchedBall.task)
                     balls.remove(balls.indexOf(firstTouchedBall));
                     balls.remove(balls.indexOf(secondTouchedBall));
 
@@ -93,7 +94,7 @@ public class World implements InputProcessor {
         int y = random.nextInt(Board.HEIGHT - Ball.HEIGHT);
         Rectangle ballRectangle = new Rectangle(x, y, Ball.WIDTH, Ball.HEIGHT);
         int distance = 200;
-        Rectangle playerRectangle = new Rectangle(player.getPosition().x - distance, player.getPosition().y - distance, player.WIDTH + 2 * distance, player.HEIGHT + 2 * distance);
+        Rectangle playerRectangle = new Rectangle(player.getPosition().x - distance, player.getPosition().y - distance, Player.WIDTH + 2 * distance, Player.HEIGHT + 2 * distance);
         if (ballRectangle.overlaps(playerRectangle)) {
             return drawBallsPosition();
         } else {
@@ -129,9 +130,29 @@ public class World implements InputProcessor {
             if (firstTouchedBall != null) {
                 if (ballRectangle.contains(touchY, touchX) && balls.get(i) != firstTouchedBall && secondTouchedBall == null) {
                     secondTouchedBall = balls.get(i);
-                    firstTouchedBall.stopped = true;
-                    secondTouchedBall.stopped = true;
+                    firstTouchedBall.catched = true;
+                    secondTouchedBall.catched = true;
                 }
+                //if we touched again first touched ball
+                else if (ballRectangle.contains(touchY, touchX) && balls.get(i) == firstTouchedBall && secondTouchedBall == null) {
+                    firstTouchedBall.catched = false;
+                    firstTouchedBall = null;
+                    line = null;
+                }
+                //if there are 2 touched balls and we touched first
+                else if (ballRectangle.contains(touchY, touchX) && balls.get(i) == firstTouchedBall && secondTouchedBall != null) {
+                    firstTouchedBall.catched = false;
+                    firstTouchedBall = secondTouchedBall;
+                    secondTouchedBall.catched = false;
+                    secondTouchedBall = null;
+                }
+                //if there are 2 touched balls and we touched second
+                else if (ballRectangle.contains(touchY, touchX) && balls.get(i) == secondTouchedBall && secondTouchedBall != null) {
+                    secondTouchedBall.catched = false;
+                    secondTouchedBall = null;
+                    firstTouchedBall.catched = false;
+                }
+
             } else if (ballRectangle.contains(touchY, touchX) && secondTouchedBall == null) {
                 firstTouchedBall = balls.get(i);
                 line = new Line();
