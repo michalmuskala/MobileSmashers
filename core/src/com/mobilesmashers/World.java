@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Rectangle;
 import com.mobilesmashers.HelpClasses.Point;
+import com.mobilesmashers.HelpClasses.Sound;
+import com.mobilesmashers.HelpClasses.Strings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,15 +40,18 @@ public class World implements InputProcessor {
 
     private void updateBalls() {
         for (int i = 0; i < balls.size(); i++) {
-            if (!balls.get(i).catched) {
+            //check for collision
+            //com.mobilesmashers.HelpClasses.Sound.playPlayerDestroyed();
+            if (balls.get(i).getState().equals(Strings.STATE_FREE)) {
                 balls.get(i).move();
-            } else {
+            } else if (balls.get(i).getState().equals(Strings.STATE_CATCHED)) {
                 Point point = new Point((firstTouchedBall.getPosition().x + secondTouchedBall.getPosition().x) / 2, (firstTouchedBall.getPosition().y + secondTouchedBall.getPosition().y) / 2);
                 if (balls.get(i).getPosition().x == point.x && balls.get(i).getPosition().y == point.y) {
                     //check if balls tasks are correct linked
-                    //if(TaskValidator.isTasksCorrect(firstTouchedBall.task, secondTouchedBall.task)
+                    //if(TaskValidator.areTasksCorrect(firstTouchedBall.task, secondTouchedBall.task)
                     balls.remove(balls.indexOf(firstTouchedBall));
                     balls.remove(balls.indexOf(secondTouchedBall));
+                    Sound.playBallsCatched();
 
                     firstTouchedBall = null;
                     secondTouchedBall = null;
@@ -130,35 +135,42 @@ public class World implements InputProcessor {
             if (firstTouchedBall != null) {
                 if (ballRectangle.contains(touchY, touchX) && balls.get(i) != firstTouchedBall && secondTouchedBall == null) {
                     secondTouchedBall = balls.get(i);
-                    firstTouchedBall.catched = true;
-                    secondTouchedBall.catched = true;
+                    setTouchedBallsState(Strings.STATE_CATCHED);
+                    Sound.playShootLine();
                 }
                 //if we touched again first touched ball
                 else if (ballRectangle.contains(touchY, touchX) && balls.get(i) == firstTouchedBall && secondTouchedBall == null) {
-                    firstTouchedBall.catched = false;
+                    firstTouchedBall.setState(Strings.STATE_FREE);
                     firstTouchedBall = null;
                     line = null;
+                    Sound.playLineBack();
                 }
                 //if there are 2 touched balls and we touched first
                 else if (ballRectangle.contains(touchY, touchX) && balls.get(i) == firstTouchedBall && secondTouchedBall != null) {
-                    firstTouchedBall.catched = false;
+                    setTouchedBallsState(Strings.STATE_FREE);
                     firstTouchedBall = secondTouchedBall;
-                    secondTouchedBall.catched = false;
                     secondTouchedBall = null;
+                    Sound.playLineBack();
                 }
                 //if there are 2 touched balls and we touched second
                 else if (ballRectangle.contains(touchY, touchX) && balls.get(i) == secondTouchedBall && secondTouchedBall != null) {
-                    secondTouchedBall.catched = false;
+                    setTouchedBallsState(Strings.STATE_FREE);
                     secondTouchedBall = null;
-                    firstTouchedBall.catched = false;
+                    Sound.playLineBack();
                 }
 
             } else if (ballRectangle.contains(touchY, touchX) && secondTouchedBall == null) {
                 firstTouchedBall = balls.get(i);
                 line = new Line();
+                Sound.playShootLine();
             }
         }
         return false;
+    }
+
+    private void setTouchedBallsState(java.lang.String state) {
+        firstTouchedBall.setState(state);
+        secondTouchedBall.setState(state);
     }
 
     @Override

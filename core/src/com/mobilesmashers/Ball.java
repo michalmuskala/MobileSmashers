@@ -1,13 +1,7 @@
 package com.mobilesmashers;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.mobilesmashers.HelpClasses.Point;
-import com.mobilesmashers.HelpClasses.Strings;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
+import com.mobilesmashers.HelpClasses.*;
 
 public class Ball {
     public static final int WIDTH = 80;
@@ -17,16 +11,16 @@ public class Ball {
     private Point position;
     private final int SPEED;
     private String currentDirection;
-    private HashMap<String, Point> directions;
-    public boolean catched = false;
+    private Directions directions;
+    private String state;
 
     public Ball(Point position) {
         SPEED = 1;
         this.image = new Texture("badlogic.jpg");
         this.position = position;
-        directions = new HashMap<String, Point>();
-        addDirections();
-        currentDirection = drawDirection();
+        directions = new Directions(SPEED);
+        currentDirection = directions.drawDirection();
+        state = Strings.STATE_FREE;
     }
 
     public Point getPosition() {
@@ -37,8 +31,41 @@ public class Ball {
         return image;
     }
 
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String value) {
+        this.state = value;
+    }
+
     public void move() {
-        //check for collision
+        setDirectionIfHitsBounds();
+        setDirectionIfInCorners();
+
+        applyDirection(currentDirection);
+    }
+
+    public void moveToPoint(Point point) {
+        if (position.x > point.x) {
+            position.x--;
+        } else if (position.x < point.x) {
+            position.x++;
+        }
+
+        if (position.y > point.y) {
+            position.y--;
+        } else if (position.y < point.y) {
+            position.y++;
+        }
+    }
+
+    private void applyDirection(String direction) {
+        position.x += directions.get(direction).x;
+        position.y += directions.get(direction).y;
+    }
+
+    private void setDirectionIfHitsBounds() {
         //from left to right
         if (position.y + HEIGHT == Board.RIGHT_BOUND) {
             if (currentDirection.equals(Strings.DOWN_RIGHT_DIRECTION)) {
@@ -71,7 +98,9 @@ public class Ball {
                 currentDirection = Strings.DOWN_LEFT_DIRECTION;
             }
         }
+    }
 
+    private void setDirectionIfInCorners() {
         //0,0
         if (position.x == Board.UP_BOUND && position.y == Board.LEFT_BOUND) {
             currentDirection = Strings.DOWN_RIGHT_DIRECTION;
@@ -88,39 +117,5 @@ public class Ball {
         if (position.x == Board.BOTTOM_BOUND && position.y == Board.RIGHT_BOUND) {
             currentDirection = Strings.UP_LEFT_DIRECTION;
         }
-
-        applyDirection(currentDirection);
-    }
-
-    public void moveToPoint(Point point) {
-        if (position.x > point.x) {
-            position.x--;
-        } else if (position.x < point.x) {
-            position.x++;
-        }
-
-        if (position.y > point.y) {
-            position.y--;
-        } else if (position.y < point.y) {
-            position.y++;
-        }
-    }
-
-    private void applyDirection(String direction) {
-        position.x += directions.get(direction).x;
-        position.y += directions.get(direction).y;
-    }
-
-    private String drawDirection() {
-        List<String> valuesList = new ArrayList<String>(directions.keySet());
-        int randomIndex = new Random().nextInt(directions.size());
-        return valuesList.get(randomIndex);
-    }
-
-    private void addDirections() {
-        directions.put(Strings.DOWN_LEFT_DIRECTION, new Point(SPEED, -SPEED));
-        directions.put(Strings.DOWN_RIGHT_DIRECTION, new Point(SPEED, SPEED));
-        directions.put(Strings.UP_LEFT_DIRECTION, new Point(-SPEED, -SPEED));
-        directions.put(Strings.UP_RIGHT_DIRECTION, new Point(-SPEED, SPEED));
     }
 }
