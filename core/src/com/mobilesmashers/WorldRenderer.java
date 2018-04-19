@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.mobilesmashers.HelpClasses.Point;
+import com.mobilesmashers.ShapeDrawing.Shape;
 
 
 public class WorldRenderer {
@@ -22,6 +23,10 @@ public class WorldRenderer {
 
         renderPlayer();
         renderBalls();
+
+        // shape tests
+        for(Shape shape : world.shapes)
+            shape.draw(batch);
 
         batch.end();
 

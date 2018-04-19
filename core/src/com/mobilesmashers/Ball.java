@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Random;
 
 public class Ball {
+
     public static final int WIDTH = 80;
     public static final int HEIGHT = 80;
     //maybe get all images to separate file?

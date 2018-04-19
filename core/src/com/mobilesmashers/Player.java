@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.mobilesmashers.HelpClasses.Point;
 
 public class Player {
+
     public static final int WIDTH = 60;
     public static final int HEIGHT = 60;
     //maybe get all images to separate file?
