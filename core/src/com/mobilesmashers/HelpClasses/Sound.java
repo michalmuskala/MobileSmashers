@@ -1,4 +1,4 @@
-package com.mobilesmashers.HelpClasses;
+package com.mobilesmashers;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
@@ -40,5 +40,17 @@ public class Sound {
         music = Gdx.audio.newMusic(Gdx.files.internal("sounds/explosion.wav"));
         music.setVolume(volume);
         music.play();
+    }
+
+    public static void lowerVolume() {
+        if (volume > 0.1f) {
+            volume -= 0.1f;
+        }
+    }
+
+    public static void increaseVolume() {
+        if (volume < 1f) {
+            volume += 0.1f;
+        }
     }
 }

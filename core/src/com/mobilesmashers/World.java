@@ -1,10 +1,10 @@
 package com.mobilesmashers;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Rectangle;
 import com.mobilesmashers.HelpClasses.Point;
-import com.mobilesmashers.HelpClasses.Sound;
 import com.mobilesmashers.HelpClasses.Strings;
 
 import java.util.ArrayList;
@@ -16,19 +16,22 @@ public class World implements InputProcessor {
     public List<Ball> balls;
     public Ball firstTouchedBall;
     public Ball secondTouchedBall;
+    private MobileSmashers game;
     public Line line;
 
-    public World() {
+    public World(MobileSmashers game) {
         this.player = new Player(new Point(Board.WIDTH / 2 - Player.WIDTH + 1, Board.HEIGHT / 2 - Player.HEIGHT + 1));
         this.balls = new ArrayList<Ball>();
         line = null;
         firstTouchedBall = null;
         secondTouchedBall = null;
+        this.game = game;
         createBalls();
         Gdx.input.setInputProcessor(this);
     }
 
     public void update() {
+        Gdx.input.setInputProcessor(this);
         updatePlayer();
         updateBalls();
         updateLine();
@@ -41,7 +44,7 @@ public class World implements InputProcessor {
     private void updateBalls() {
         for (int i = 0; i < balls.size(); i++) {
             //check for collision
-            //com.mobilesmashers.HelpClasses.Sound.playPlayerDestroyed();
+            //com.mobilesmashers.Sound.playPlayerDestroyed();
             if (balls.get(i).getState().equals(Strings.STATE_FREE)) {
                 balls.get(i).move();
             } else if (balls.get(i).getState().equals(Strings.STATE_CATCHED)) {
@@ -51,7 +54,7 @@ public class World implements InputProcessor {
                     //if(TaskValidator.areTasksCorrect(firstTouchedBall.task, secondTouchedBall.task)
                     balls.remove(balls.indexOf(firstTouchedBall));
                     balls.remove(balls.indexOf(secondTouchedBall));
-                    Sound.playBallsCatched();
+                    com.mobilesmashers.Sound.playBallsCatched();
 
                     firstTouchedBall = null;
                     secondTouchedBall = null;
@@ -111,6 +114,9 @@ public class World implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
+        if (keycode == Input.Keys.BACK) {
+            game.setMainMenuScreen();
+        }
         return false;
     }
 
@@ -136,33 +142,33 @@ public class World implements InputProcessor {
                 if (ballRectangle.contains(touchY, touchX) && balls.get(i) != firstTouchedBall && secondTouchedBall == null) {
                     secondTouchedBall = balls.get(i);
                     setTouchedBallsState(Strings.STATE_CATCHED);
-                    Sound.playShootLine();
+                    com.mobilesmashers.Sound.playShootLine();
                 }
                 //if we touched again first touched ball
                 else if (ballRectangle.contains(touchY, touchX) && balls.get(i) == firstTouchedBall && secondTouchedBall == null) {
                     firstTouchedBall.setState(Strings.STATE_FREE);
                     firstTouchedBall = null;
                     line = null;
-                    Sound.playLineBack();
+                    com.mobilesmashers.Sound.playLineBack();
                 }
                 //if there are 2 touched balls and we touched first
                 else if (ballRectangle.contains(touchY, touchX) && balls.get(i) == firstTouchedBall && secondTouchedBall != null) {
                     setTouchedBallsState(Strings.STATE_FREE);
                     firstTouchedBall = secondTouchedBall;
                     secondTouchedBall = null;
-                    Sound.playLineBack();
+                    com.mobilesmashers.Sound.playLineBack();
                 }
                 //if there are 2 touched balls and we touched second
                 else if (ballRectangle.contains(touchY, touchX) && balls.get(i) == secondTouchedBall && secondTouchedBall != null) {
                     setTouchedBallsState(Strings.STATE_FREE);
                     secondTouchedBall = null;
-                    Sound.playLineBack();
+                    com.mobilesmashers.Sound.playLineBack();
                 }
 
             } else if (ballRectangle.contains(touchY, touchX) && secondTouchedBall == null) {
                 firstTouchedBall = balls.get(i);
                 line = new Line();
-                Sound.playShootLine();
+                com.mobilesmashers.Sound.playShootLine();
             }
         }
         return false;
