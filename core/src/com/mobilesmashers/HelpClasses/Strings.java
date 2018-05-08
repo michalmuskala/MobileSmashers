@@ -8,4 +8,7 @@ public class Strings {
     public static final String PRIME_TASK = "prime";
     public static final String EVEN_TASK = "even";
     public static final String MULTIPLIED_BY_TEN_TASK = "multipliedByTen";
+    public static final String STATE_FREE = "FREE";
+    public static final String STATE_CATCHED = "CATCHED";
+    public static final String STATE_STOPPED = "STOPPED";
 }
