@@ -18,7 +18,7 @@ public class Ball {
     private final int SPEED;
     private String currentDirection;
     private HashMap<String, Point> directions;
-    public boolean stopped = false;
+    public boolean catched = false;
 
     public Ball(Point position) {
         SPEED = 1;
