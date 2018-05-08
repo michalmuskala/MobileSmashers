@@ -13,6 +13,7 @@ public class MobileSmashers extends Game {
     public void create() {
         batch = new SpriteBatch();
         setScreen(new GameScreen(this));
+        //setScreen(new MainMenu(this));
     }
 
     @Override
@@ -25,5 +26,9 @@ public class MobileSmashers extends Game {
     @Override
     public void dispose() {
         batch.dispose();
+    }
+
+    public void setMainMenuScreen() {
+        setScreen(new MainMenu(this));
     }
 }

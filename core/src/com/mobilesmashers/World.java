@@ -1,6 +1,7 @@
 package com.mobilesmashers;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Rectangle;
 import com.mobilesmashers.HelpClasses.Point;
@@ -10,6 +11,7 @@ import com.mobilesmashers.ShapeDrawing.Rect;
 import com.mobilesmashers.ShapeDrawing.RotRect;
 import com.mobilesmashers.ShapeDrawing.Shape;
 import com.mobilesmashers.ShapeDrawing.Text;
+import com.mobilesmashers.HelpClasses.Strings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,17 +27,18 @@ public class World implements InputProcessor {
     public List<Ball> balls;
     public Ball firstTouchedBall;
     public Ball secondTouchedBall;
+    private MobileSmashers game;
     public Line line;
 
     // shape testing
     List<Shape> shapes;
-
-    public World() {
+    public World(MobileSmashers game) {
         this.player = new Player(new Point(Board.WIDTH / 2 - Player.WIDTH + 1, Board.HEIGHT / 2 - Player.HEIGHT + 1));
         this.balls = new ArrayList<Ball>();
         line = null;
         firstTouchedBall = null;
         secondTouchedBall = null;
+        this.game = game;
         createBalls();
         Gdx.input.setInputProcessor(this);
 
@@ -49,6 +52,7 @@ public class World implements InputProcessor {
     }
 
     public void update() {
+        Gdx.input.setInputProcessor(this);
         updatePlayer();
         updateBalls();
         updateLine();
@@ -62,14 +66,18 @@ public class World implements InputProcessor {
 
     private void updateBalls() {
         for (int i = 0; i < balls.size(); i++) {
-            if (!balls.get(i).stopped) {
+            //check for collision
+            //com.mobilesmashers.Sound.playPlayerDestroyed();
+            if (balls.get(i).getState().equals(Strings.STATE_FREE)) {
                 balls.get(i).move();
-            } else {
+            } else if (balls.get(i).getState().equals(Strings.STATE_CATCHED)) {
                 Point point = new Point((firstTouchedBall.getPosition().x + secondTouchedBall.getPosition().x) / 2, (firstTouchedBall.getPosition().y + secondTouchedBall.getPosition().y) / 2);
                 if (balls.get(i).getPosition().x == point.x && balls.get(i).getPosition().y == point.y) {
                     //check if balls tasks are correct linked
+                    //if(TaskValidator.areTasksCorrect(firstTouchedBall.task, secondTouchedBall.task)
                     balls.remove(balls.indexOf(firstTouchedBall));
                     balls.remove(balls.indexOf(secondTouchedBall));
+                    com.mobilesmashers.Sound.playBallsCatched();
 
                     firstTouchedBall = null;
                     secondTouchedBall = null;
@@ -117,7 +125,7 @@ public class World implements InputProcessor {
         int y = random.nextInt(Board.HEIGHT - Ball.HEIGHT);
         Rectangle ballRectangle = new Rectangle(x, y, Ball.WIDTH, Ball.HEIGHT);
         int distance = 200;
-        Rectangle playerRectangle = new Rectangle(player.getPosition().x - distance, player.getPosition().y - distance, player.WIDTH + 2 * distance, player.HEIGHT + 2 * distance);
+        Rectangle playerRectangle = new Rectangle(player.getPosition().x - distance, player.getPosition().y - distance, Player.WIDTH + 2 * distance, Player.HEIGHT + 2 * distance);
         if (ballRectangle.overlaps(playerRectangle)) {
             return drawBallsPosition();
         } else {
@@ -129,6 +137,9 @@ public class World implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
+        if (keycode == Input.Keys.BACK) {
+            game.setMainMenuScreen();
+        }
         return false;
     }
 
@@ -153,15 +164,42 @@ public class World implements InputProcessor {
             if (firstTouchedBall != null) {
                 if (ballRectangle.contains(touchY, touchX) && balls.get(i) != firstTouchedBall && secondTouchedBall == null) {
                     secondTouchedBall = balls.get(i);
-                    firstTouchedBall.stopped = true;
-                    secondTouchedBall.stopped = true;
+                    setTouchedBallsState(Strings.STATE_CATCHED);
+                    com.mobilesmashers.Sound.playShootLine();
                 }
+                //if we touched again first touched ball
+                else if (ballRectangle.contains(touchY, touchX) && balls.get(i) == firstTouchedBall && secondTouchedBall == null) {
+                    firstTouchedBall.setState(Strings.STATE_FREE);
+                    firstTouchedBall = null;
+                    line = null;
+                    com.mobilesmashers.Sound.playLineBack();
+                }
+                //if there are 2 touched balls and we touched first
+                else if (ballRectangle.contains(touchY, touchX) && balls.get(i) == firstTouchedBall && secondTouchedBall != null) {
+                    setTouchedBallsState(Strings.STATE_FREE);
+                    firstTouchedBall = secondTouchedBall;
+                    secondTouchedBall = null;
+                    com.mobilesmashers.Sound.playLineBack();
+                }
+                //if there are 2 touched balls and we touched second
+                else if (ballRectangle.contains(touchY, touchX) && balls.get(i) == secondTouchedBall && secondTouchedBall != null) {
+                    setTouchedBallsState(Strings.STATE_FREE);
+                    secondTouchedBall = null;
+                    com.mobilesmashers.Sound.playLineBack();
+                }
+
             } else if (ballRectangle.contains(touchY, touchX) && secondTouchedBall == null) {
                 firstTouchedBall = balls.get(i);
                 line = new Line();
+                com.mobilesmashers.Sound.playShootLine();
             }
         }
         return false;
+    }
+
+    private void setTouchedBallsState(java.lang.String state) {
+        firstTouchedBall.setState(state);
+        secondTouchedBall.setState(state);
     }
 
     @Override
