@@ -5,11 +5,22 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Rectangle;
 import com.mobilesmashers.HelpClasses.Point;
+import com.mobilesmashers.HelpClasses.Pointf;
+import com.mobilesmashers.ShapeDrawing.Disk;
+import com.mobilesmashers.ShapeDrawing.Rect;
+import com.mobilesmashers.ShapeDrawing.RotRect;
+import com.mobilesmashers.ShapeDrawing.Shape;
+import com.mobilesmashers.ShapeDrawing.Text;
 import com.mobilesmashers.HelpClasses.Strings;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import static com.badlogic.gdx.graphics.Color.BLACK;
+import static com.badlogic.gdx.graphics.Color.BLUE;
+import static com.badlogic.gdx.graphics.Color.GREEN;
+import static com.badlogic.gdx.graphics.Color.YELLOW;
 
 public class World implements InputProcessor {
     public final Player player;
@@ -19,6 +30,8 @@ public class World implements InputProcessor {
     private MobileSmashers game;
     public Line line;
 
+    // shape testing
+    List<Shape> shapes;
     public World(MobileSmashers game) {
         this.player = new Player(new Point(Board.WIDTH / 2 - Player.WIDTH + 1, Board.HEIGHT / 2 - Player.HEIGHT + 1));
         this.balls = new ArrayList<Ball>();
@@ -28,6 +41,14 @@ public class World implements InputProcessor {
         this.game = game;
         createBalls();
         Gdx.input.setInputProcessor(this);
+
+        // shape testing
+        shapes = new ArrayList<Shape>();
+        shapes.add(new Disk(new Point(400, 400), 300, Disk.newTexture(300, BLACK)));
+        shapes.add(new Rect(new Point(200, 200), new Point(600, 300), Rect.newTexture(new Point(600, 300), YELLOW)));
+        shapes.add(new Text(new Point(600, 600), "Hello world!", BLUE, 3));
+        shapes.add(new RotRect(new Point(100, 100), new Point(100, 1000), Rect.newTexture(new Point(100, 1000), GREEN)));
+        shapes.add(new RotRect(new Point(500, 100), new Point(100, 1000), new Point(150, 600), new Pointf(0.5f, 1.f), 0.5f, Shape.textures.get(2)));
     }
 
     public void update() {
@@ -35,6 +56,8 @@ public class World implements InputProcessor {
         updatePlayer();
         updateBalls();
         updateLine();
+
+        ((RotRect)shapes.get(4)).incAngle(10.f);
     }
 
     private void updatePlayer() {

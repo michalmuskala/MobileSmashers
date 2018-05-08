@@ -3,6 +3,7 @@ package com.mobilesmashers;
 import com.mobilesmashers.HelpClasses.Point;
 
 public class Line {
+
     private Point initialPosition;
     private Point target;
 

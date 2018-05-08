@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class MobileSmashers extends Game {
+
     SpriteBatch batch;
 
     @Override
