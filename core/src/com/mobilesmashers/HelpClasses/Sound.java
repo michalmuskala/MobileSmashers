@@ -5,16 +5,16 @@ import com.badlogic.gdx.audio.Music;
 
 public class Sound {
     private static Music music;
-    private static float volume = 0f;
+    private static int volume = 0;
 
     private Sound() {
     }
 
-    public void setVolume(float value) {
+    public void setVolume(int value) {
         this.volume = value;
     }
 
-    public static float getVolume() {
+    public static int getVolume() {
         return volume;
     }
 
@@ -43,14 +43,14 @@ public class Sound {
     }
 
     public static void lowerVolume() {
-        if (volume > 0.1f) {
-            volume -= 0.1f;
+        if (volume >= 1) {
+            volume -= 1;
         }
     }
 
     public static void increaseVolume() {
-        if (volume < 1f) {
-            volume += 0.1f;
+        if (volume < 10) {
+            volume += 1;
         }
     }
 }

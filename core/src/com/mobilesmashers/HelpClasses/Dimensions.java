@@ -2,7 +2,7 @@ package com.mobilesmashers.HelpClasses;
 
 import com.mobilesmashers.Board;
 
-public class MainMenuDimensions {
+public class Dimensions {
     public static int logoHeight = 950;
     public static int logoWidth = 250;
     public static int logoBegX = Board.WIDTH / 2 - logoHeight / 2;
@@ -27,4 +27,23 @@ public class MainMenuDimensions {
     public static int volumeHigherWidth = 120;
     public static int volumeHigherBegX = 6 * Board.WIDTH / 7;
     public static int volumeHigherBegY = Board.HEIGHT / 20;
+
+
+    public static int movingPlayerInfoBegX = Board.WIDTH / 2 - infoHeight / 2;
+    public static int movingPlayerInfoBegY = Board.HEIGHT - 270;
+
+    public static int primeWidth =  380;
+    public static int primeHeight = 150;
+    public static int primeBegX = 1 * Board.WIDTH/15;
+    public static int primeBegY = 1 * Board.HEIGHT/7;
+
+    public static int evenWidth =  380;
+    public static int evenHeight = 150;
+    public static int evenBegX = (int)(5.5 * Board.WIDTH/15);
+    public static int evenBegY = 1 * Board.HEIGHT/7;
+
+    public static int tenthWidth =  380;
+    public static int tenthHeight = 150;
+    public static int tenthBegX = 10 * Board.WIDTH/15;
+    public static int tenthBegY = 1 * Board.HEIGHT/7;
 }

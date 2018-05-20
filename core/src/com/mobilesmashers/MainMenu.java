@@ -6,7 +6,12 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
-import com.mobilesmashers.HelpClasses.MainMenuDimensions;
+import com.mobilesmashers.HelpClasses.Dimensions;
+import com.mobilesmashers.HelpClasses.Point;
+import com.mobilesmashers.HelpClasses.Strings;
+import com.mobilesmashers.ShapeDrawing.Text;
+
+import static com.badlogic.gdx.graphics.Color.ORANGE;
 
 public class MainMenu extends ScreenAdapter implements InputProcessor {
 
@@ -22,20 +27,21 @@ public class MainMenu extends ScreenAdapter implements InputProcessor {
         this.volumeHigher = new Texture("pictures/sounds_on.png");
 
         this.game = game;
-        Gdx.input.setInputProcessor(this);
     }
 
     @Override
     public void render(float delta) {
+        Gdx.input.setInputProcessor(this);
         game.batch.begin();
 
         game.batch.draw(background, 0, 0, Board.WIDTH, Board.HEIGHT);
-        game.batch.draw(logo, MainMenuDimensions.logoBegX, MainMenuDimensions.logoBegY, MainMenuDimensions.logoHeight, MainMenuDimensions.logoWidth);
-        game.batch.draw(play, MainMenuDimensions.playBegX, MainMenuDimensions.playBegY, MainMenuDimensions.playHeight, MainMenuDimensions.playWidth);
-        game.batch.draw(info, MainMenuDimensions.infoBegX, MainMenuDimensions.infoBegY, MainMenuDimensions.infoHeight, MainMenuDimensions.infoWidth);
-        game.batch.draw(volumeLower, MainMenuDimensions.volumeLowerBegX, MainMenuDimensions.volumeLowerBegY, MainMenuDimensions.volumeLowerHeight, MainMenuDimensions.volumeLowerWidth);
-        // in (5*Board.WIDTH /6, Board.HEIGHT / 20) -> get Sound.volume and show there
-        game.batch.draw(volumeHigher, MainMenuDimensions.volumeHigherBegX, MainMenuDimensions.volumeHigherBegY, MainMenuDimensions.volumeHigherHeight, MainMenuDimensions.volumeHigherWidth);
+        game.batch.draw(logo, Dimensions.logoBegX, Dimensions.logoBegY, Dimensions.logoHeight, Dimensions.logoWidth);
+        game.batch.draw(play, Dimensions.playBegX, Dimensions.playBegY, Dimensions.playHeight, Dimensions.playWidth);
+        game.batch.draw(info, Dimensions.infoBegX, Dimensions.infoBegY, Dimensions.infoHeight, Dimensions.infoWidth);
+        game.batch.draw(volumeLower, Dimensions.volumeLowerBegX, Dimensions.volumeLowerBegY, Dimensions.volumeLowerHeight, Dimensions.volumeLowerWidth);
+        Text volumeInfo = new Text(new Point((int)(4.6*Board.WIDTH /6), (Board.HEIGHT)/ 6), String.valueOf(Sound.getVolume() * 10) + "%", ORANGE, 3);
+        volumeInfo.draw(game.batch);
+        game.batch.draw(volumeHigher, Dimensions.volumeHigherBegX, Dimensions.volumeHigherBegY, Dimensions.volumeHigherHeight, Dimensions.volumeHigherWidth);
 
         game.batch.end();
     }
@@ -60,7 +66,7 @@ public class MainMenu extends ScreenAdapter implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        Rectangle playRectangle = new Rectangle(MainMenuDimensions.playBegX, MainMenuDimensions.playBegY, MainMenuDimensions.playHeight, MainMenuDimensions.playWidth);
+        Rectangle playRectangle = new Rectangle(Dimensions.playBegX, Dimensions.playBegY, Dimensions.playHeight, Dimensions.playWidth);
         int touchX = (Board.HEIGHT - Gdx.input.getY());
         int touchY = Gdx.input.getX();
 
@@ -68,25 +74,22 @@ public class MainMenu extends ScreenAdapter implements InputProcessor {
         if (playRectangle.contains(touchY, touchX)) {
             Board.level = 1;
             game.setScreen(new GameScreen(game));
-            Gdx.input.setInputProcessor(null);
         }
         //touched info button
-        Rectangle infoRectangle = new Rectangle(MainMenuDimensions.infoBegX, MainMenuDimensions.infoBegY, MainMenuDimensions.infoHeight, MainMenuDimensions.infoWidth);
+        Rectangle infoRectangle = new Rectangle(Dimensions.infoBegX, Dimensions.infoBegY, Dimensions.infoHeight, Dimensions.infoWidth);
         if (infoRectangle.contains(touchY, touchX)) {
-            //show info screen
+            game.setScreen(new InfoScreen(game));
         }
 
         //touched lowerVolume
-        Rectangle lowerVolumeRectangle = new Rectangle(MainMenuDimensions.volumeLowerBegX, MainMenuDimensions.volumeLowerBegY, MainMenuDimensions.volumeLowerHeight, MainMenuDimensions.volumeLowerWidth);
+        Rectangle lowerVolumeRectangle = new Rectangle(Dimensions.volumeLowerBegX, Dimensions.volumeLowerBegY, Dimensions.volumeLowerHeight, Dimensions.volumeLowerWidth);
         if (lowerVolumeRectangle.contains(touchY, touchX)) {
             com.mobilesmashers.Sound.lowerVolume();
-            //refresh volume value on screen
         }
         //touched higherVolume
-        Rectangle higherVolumeRectangle = new Rectangle(MainMenuDimensions.volumeHigherBegX, MainMenuDimensions.volumeHigherBegY, MainMenuDimensions.volumeHigherHeight, MainMenuDimensions.volumeHigherWidth);
+        Rectangle higherVolumeRectangle = new Rectangle(Dimensions.volumeHigherBegX, Dimensions.volumeHigherBegY, Dimensions.volumeHigherHeight, Dimensions.volumeHigherWidth);
         if (higherVolumeRectangle.contains(touchY, touchX)) {
             com.mobilesmashers.Sound.increaseVolume();
-            //refresh volume value on screen
         }
         return false;
     }

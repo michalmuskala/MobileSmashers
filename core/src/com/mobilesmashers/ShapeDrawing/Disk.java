@@ -38,8 +38,8 @@ public class Disk extends Shape {
 	public void draw(Batch batch) {
 		batch.draw(
 				texture,
-				position.x,
-				position.y,
+				position.x - radius/2,
+				position.y - radius/2,
 				radius,
 				radius
 		);
