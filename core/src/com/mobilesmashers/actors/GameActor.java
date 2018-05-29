@@ -2,40 +2,34 @@ package com.mobilesmashers.actors;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
-public abstract class GameActor extends Actor {
+import static com.mobilesmashers.utils.World.met_to_pix;
 
-	protected Vector2 speed;
+public class GameActor extends Actor {
+
 	protected Texture texture;
 
-	public GameActor(Vector2 position, Vector2 size, Vector2 speed, Texture texture) {
-		setPosition(position.x, position.y);
-		setSize(size.x, size.y);
-		this.speed = speed;
+	GameActor(Texture texture) {
+		this(0, 0, texture);
+	}
+
+	GameActor(float width, float height, Texture texture) {
+		this(0, 0, width, height, texture);
+	}
+
+	GameActor(float x, float y, float width, float height, Texture texture) {
+		super();
+
+		setName(this.toString());
+		setPosition(met_to_pix(x), met_to_pix(y));
+		setSize(met_to_pix(width), met_to_pix(height));
+
 		this.texture = texture;
 	}
 
 	@Override
-	public void act(float delta) {
-		moveBy(speed.x, speed.y);
-	}
-
-	@Override
 	public void draw(Batch batch, float parentAlpha) {
-		batch.draw(
-				texture,
-				getX(), getY(),
-				getWidth(), getHeight()
-		);
-	}
-
-	public Vector2 getSpeed() {
-		return speed;
-	}
-
-	public Vector2 getMiddlePosition() {
-		return new Vector2(getX() + getWidth() / 2, getY() + getHeight() / 2);
+		batch.draw(texture, getX(), getY(), getWidth(), getHeight());
 	}
 }

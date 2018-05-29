@@ -7,7 +7,7 @@ import com.mobilesmashers.stages.GameStage;
 
 public class GameScreen implements Screen {
 
-	GameStage stage;
+	private GameStage stage;
 
 	public GameScreen() {
 		stage = new GameStage();

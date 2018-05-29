@@ -25,14 +25,14 @@ public class ShapeDrawing {
 		return texture;
 	}
 
-	public static Texture rect(Vector2 size, Color color) {
+	public static Texture rect(int width, int height, Color color) {
 		Pixmap pixmap = new Pixmap(
-				(int) size.x,
-				(int) size.y,
+				width,
+				height,
 				Pixmap.Format.RGBA8888
 		);
 		pixmap.setColor(color);
-		pixmap.fillRectangle(0, 0, (int) size.x, (int) size.y);
+		pixmap.fillRectangle(0, 0, width, height);
 
 		Texture texture = new Texture(pixmap);
 
