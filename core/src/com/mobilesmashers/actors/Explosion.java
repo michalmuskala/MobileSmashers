@@ -3,7 +3,7 @@ package com.mobilesmashers.actors;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
-import static com.mobilesmashers.utils.World.met_to_pix;
+import static com.mobilesmashers.utils.WorldUtils.met_to_pix;
 
 public class Explosion extends GameActor {
 

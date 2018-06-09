@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 
-public class ShapeDrawing {
+public final class ShapeDrawing {
 
 	public static Texture disk(int radius, Color color) {
 		int dRadius = 2 * radius;

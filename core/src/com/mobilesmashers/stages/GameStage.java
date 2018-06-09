@@ -6,17 +6,21 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
 import com.badlogic.gdx.physics.box2d.ContactImpulse;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.mobilesmashers.actors.Ball;
+import com.mobilesmashers.actors.CircleDynamicBody;
 import com.mobilesmashers.actors.Explosion;
+import com.mobilesmashers.actors.GameBody;
 import com.mobilesmashers.actors.Hook;
 import com.mobilesmashers.actors.Player;
 import com.mobilesmashers.actors.Rope;
@@ -24,7 +28,9 @@ import com.mobilesmashers.actors.Wall;
 import com.mobilesmashers.utils.Constants;
 import com.mobilesmashers.utils.ShapeDrawing;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import static com.mobilesmashers.utils.Constants.BALL_MAX_INIT_SPEED;
 import static com.mobilesmashers.utils.Constants.BALL_MIN_DST_FROM_PLAYER;
@@ -48,9 +54,11 @@ import static com.mobilesmashers.utils.Constants.WALL_DIM;
 import static com.mobilesmashers.utils.Constants.WALL_TEXTURE_KEY;
 import static com.mobilesmashers.utils.Constants.WORLD_HEIGHT;
 import static com.mobilesmashers.utils.Constants.WORLD_WIDTH;
+import static com.mobilesmashers.utils.Geo.vectorAngle;
 import static com.mobilesmashers.utils.Randomize.nextFloat;
-import static com.mobilesmashers.utils.World.met_to_pix;
-import static com.mobilesmashers.utils.World.pix_to_met;
+import static com.mobilesmashers.utils.WorldUtils.met_to_pix;
+import static com.mobilesmashers.utils.WorldUtils.pix_to_met;
+import static com.mobilesmashers.utils.WorldUtils.world_center;
 
 public class GameStage extends Stage implements InputProcessor, ContactListener {
 
@@ -59,6 +67,8 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 	private World world;
 	private Explosion explosion;
 	private Player player;
+	private List<Actor> tiedActors;
+	private List<GameBody> toRemove;
 
 	private HashMap<String, Texture> textures;
 
@@ -74,9 +84,7 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 
 		World.setVelocityThreshold(0.8f);
 
-		gameOn = true;
-		accumulator = 0;
-
+		initFields();
 		initClasses();
 		createTextures();
 		createWorld();
@@ -99,15 +107,20 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 			}
 			super.act(frameTime);
 			accumulator -= TIME_STEP;
+
+			while (toRemove.size() > 0) {
+				GameBody gb = toRemove.get(0);
+				gb.remove();
+				world.destroyBody(gb.getBody());
+				toRemove.remove(0);
+			}
 		}
 	}
 
 	@Override
 	public void dispose() {
 
-		Ball.dispose_class();
-		Hook.dispose_class();
-		Player.dispose_class();
+		CircleDynamicBody.dispose_class();
 		Wall.dispose_class();
 
 		for (Texture texture : textures.values())
@@ -173,19 +186,22 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 
 	@Override
 	public void beginContact(Contact contact) {
-		Object a = contact.getFixtureA().getBody().getUserData();
-		Object b = contact.getFixtureB().getBody().getUserData();
-		if (a == player || b == player) {
-			if (a.getClass() == Ball.class
-					|| b.getClass() == Ball.class) {
+		Object
+				a = contact.getFixtureA().getBody().getUserData(),
+				b = contact.getFixtureB().getBody().getUserData();
+		Class
+				aClass = a.getClass(),
+				bClass = b.getClass();
+
+		if (aClass == Hook.class || bClass == Hook.class) {
+			if ((aClass == Ball.class || bClass == Ball.class) ||
+					(aClass == Player.class || bClass == Player.class))
+				tie(a, b);
+		} else if (a == player || b == player) {
+			if (aClass == Ball.class
+					|| bClass == Ball.class) {
 				gameOn = false;
 				explode(a, b);
-			}
-		} else if (a.getClass() == Hook.class
-				|| b.getClass() == Hook.class) {
-			if (a.getClass() == Ball.class
-					|| b.getClass() == Ball.class) {
-				// TODO: continue in tie method
 			}
 		}
 	}
@@ -195,32 +211,61 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 	}
 
 	private void tie(Object a, Object b) {
-		// TODO: continue here. Consider making TieAble interface
+
+		if (a.getClass() == Player.class)
+			return;
+
+		if (a.getClass() == Ball.class) {
+			Object temp = a;
+			a = b;
+			b = temp;
+		}
+
+		Ball ball = (Ball) b;
+		Hook hook = (Hook) a;
+
+		for (Actor actor : tiedActors)
+			if (actor == ball)
+				return;
+
+		hook.getRope().replaceEnd(hook, (Ball) b);
+		tiedActors.add(ball);
+		toRemove.add(hook);
 	}
+
 	private void shoot(float dirX, float dirY) {
 		float vx = dirX, vy = dirY;
-		Vector2 pos = player.getInWorldPosition();
+		//Vector2 pos = player.getPosition();
+		Vector2 pos = world_center();
+		float angle = vectorAngle(pos.x, pos.y, dirX, dirY);
 
 		if (player.rope != null) {
-			player.rope.setTail(setNewHook(pos.x, pos.y, vx, vy));
+			Hook hook = spawnHook(pos.x, pos.y, vx, vy, angle);
+			hook.setRope(player.rope);
+			player.rope.setTail(hook);
 			player.rope = null;
+			tiedActors.remove(player);
 		} else if (player.ropeNumber > 0) {
 			player.ropeNumber -= 1;
+			Hook hook = spawnHook(pos.x, pos.y, vx, vy, angle);
 			Rope rope = new Rope(
 					Constants.ROPE_THICKNESS_PX,
-					setNewHook(pos.x, pos.y, vx, vy),
+					hook,
 					player,
 					textures.get(ROPE_TEXTURE_KEY)
 			);
+			hook.setRope(rope);
 			player.rope = rope;
 			addActor(rope);
+			tiedActors.add(player);
 		}
+		// TODO: correct Geo.vectorAngle function (make sure you don't fu up Rope drawing)
 		// FIXME: make hook bodies spawn outside of player body
 	}
 
-	private Hook setNewHook(float x, float y, float vx, float vy) {
+	private Hook spawnHook(float x, float y, float vx, float vy, float angle) {
 		Hook hook = new Hook(world, x, y, Constants.HOOK_RADIUS, textures.get(HOOK_TEXTURE_KEY));
-		hook.setLinearVelocity(vx, vy);
+		hook.setLinearVelocity(MathUtils.cos(angle + MathUtils.PI), MathUtils.sin(angle + MathUtils.PI));
 		addActor(hook);
 		return hook;
 	}
@@ -247,10 +292,15 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 		textures.put(WALL_TEXTURE_KEY, ShapeDrawing.rect(10, 10, Color.YELLOW));
 	}
 
+	private void initFields() {
+		gameOn = true;
+		accumulator = 0;
+		tiedActors = new ArrayList<Actor>();
+		toRemove = new ArrayList<GameBody>();
+	}
+
 	private void initClasses() {
-		Ball.init_class();
-		Hook.init_class();
-		Player.init_class();
+		CircleDynamicBody.init_class();
 		Wall.init_class();
 	}
 

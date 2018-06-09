@@ -4,28 +4,25 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
-import static com.mobilesmashers.utils.World.met_to_pix;
+import static com.mobilesmashers.utils.WorldUtils.met_to_pix;
 
 public class GameActor extends Actor {
 
 	protected Texture texture;
 
-	GameActor(Texture texture) {
-		this(0, 0, texture);
+	public GameActor(Texture texture) {
+		this(0, 0, 0, 0, texture);
 	}
 
-	GameActor(float width, float height, Texture texture) {
+	public GameActor(float width, float height, Texture texture) {
 		this(0, 0, width, height, texture);
 	}
 
-	GameActor(float x, float y, float width, float height, Texture texture) {
-		super();
-
-		setName(this.toString());
+	public GameActor(float x, float y, float width, float height, Texture texture) {
+		this.texture = texture;
+		setName(toString());
 		setPosition(met_to_pix(x), met_to_pix(y));
 		setSize(met_to_pix(width), met_to_pix(height));
-
-		this.texture = texture;
 	}
 
 	@Override

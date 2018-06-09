@@ -2,7 +2,7 @@ package com.mobilesmashers.utils;
 
 import java.util.Random;
 
-public class Randomize {
+public final class Randomize {
 
 	private static Random random = new Random();
 

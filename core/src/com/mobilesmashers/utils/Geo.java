@@ -2,12 +2,13 @@ package com.mobilesmashers.utils;
 
 import com.badlogic.gdx.math.Vector2;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import static com.badlogic.gdx.math.MathUtils.PI;
 import static com.badlogic.gdx.math.MathUtils.atan2;
 
-public class Geo {
+public final class Geo {
 
 	@NotNull
 	public static float vectorAngle(Vector2 beg, Vector2 end) {
@@ -15,10 +16,8 @@ public class Geo {
 	}
 
 	public static float vectorAngle(float begX, float begY, float endX, float endY) {
-		float dx = endX - begX;
-		float dy = endY - begY;
 		// no idea why this werks
-		return atan2(dy, dx) * 180 / PI;
+		return atan2(endY - begY, endX - begX);
 	}
 
 	private Geo() {

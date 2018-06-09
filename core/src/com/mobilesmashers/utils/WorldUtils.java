@@ -8,7 +8,7 @@ import com.badlogic.gdx.physics.box2d.Shape;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-public final class World {
+public final class WorldUtils {
 
 	@Contract(pure = true)
 	public static float met_to_pix(float met) {
@@ -18,6 +18,11 @@ public final class World {
 	@Contract(pure = true)
 	public static float pix_to_met(float pix) {
 		return pix / Constants.PIX_PER_METER;
+	}
+
+	@NotNull
+	public static Vector2 world_center() {
+		return new Vector2(Constants.WORLD_WIDTH / 2, Constants.WORLD_HEIGHT / 2);
 	}
 
 	@NotNull
@@ -37,13 +42,16 @@ public final class World {
 
 	@NotNull
 	public static FixtureDef newFixtureDef(float density, float friction, float restitution) {
+		return newFixtureDef(density, friction, restitution, null);
+	}
+
+	@NotNull
+	public static FixtureDef newFixtureDef(float density, float friction, float restitution, Shape shape) {
 		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.density = density;
 		fixtureDef.friction = friction;
 		fixtureDef.restitution = restitution;
+		fixtureDef.shape = shape;
 		return fixtureDef;
-	}
-
-	private World() {
 	}
 }

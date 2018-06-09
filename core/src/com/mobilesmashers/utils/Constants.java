@@ -3,10 +3,10 @@ package com.mobilesmashers.utils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 
-import static com.mobilesmashers.utils.World.pix_to_met;
-import static com.mobilesmashers.utils.World.world_center;
+import static com.mobilesmashers.utils.WorldUtils.pix_to_met;
+import static com.mobilesmashers.utils.WorldUtils.world_center;
 
-public class Constants {
+public final class Constants {
 
 	public static final boolean
 			DO_SLEEP = true;
@@ -42,10 +42,6 @@ public class Constants {
 			MAX_TIME_DELTA = .25f,
 			SHOOT_FORCE = 5f / (float) Math.sqrt(WORLD_WIDTH * WORLD_WIDTH + WORLD_HEIGHT * WORLD_HEIGHT),
 			SIDE_WALLS_DIM = WORLD_HEIGHT,
-			STAGE_BOUND_BOTTOM = 0f,
-			STAGE_BOUND_LEFT = 0f,
-			STAGE_BOUND_RIGHT = VIEWPORT_WIDTH,
-			STAGE_BOUND_TOP = VIEWPORT_HEIGHT,
 			PLAYER_DENSITY = 1f,
 			PLAYER_FRICTION = 0f,
 			PLAYER_RESTITUTION = 0f,
