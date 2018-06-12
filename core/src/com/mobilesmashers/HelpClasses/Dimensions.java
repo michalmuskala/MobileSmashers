@@ -28,7 +28,6 @@ public class Dimensions {
     public static int volumeHigherBegX = 6 * Board.WIDTH / 7;
     public static int volumeHigherBegY = Board.HEIGHT / 20;
 
-
     public static int movingPlayerInfoBegX = Board.WIDTH / 2 - infoHeight / 2;
     public static int movingPlayerInfoBegY = Board.HEIGHT - 270;
 
@@ -46,4 +45,14 @@ public class Dimensions {
     public static int tenthHeight = 150;
     public static int tenthBegX = 10 * Board.WIDTH/15;
     public static int tenthBegY = 1 * Board.HEIGHT/7;
+
+    public static int gameOverWidth = 200;
+    public static int gameOverHeight = 630;
+    public static int gameOverBegX = Board.WIDTH / 2 - gameOverHeight / 2;
+    public static int gameOverBegY = Board.HEIGHT - 250;
+
+    public static int menuWidth = 150;
+    public static int menuHeight = 430;
+    public static int menuBegX = Board.WIDTH / 2 - menuHeight / 2;
+    public static int menuBegY = Board.HEIGHT / 3 - menuWidth;
 }
