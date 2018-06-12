@@ -25,6 +25,8 @@ import com.mobilesmashers.actors.Hook;
 import com.mobilesmashers.actors.Player;
 import com.mobilesmashers.actors.Rope;
 import com.mobilesmashers.actors.Wall;
+import com.mobilesmashers.tasks.Parity;
+import com.mobilesmashers.tasks.Task;
 import com.mobilesmashers.utils.Constants;
 import com.mobilesmashers.utils.ShapeDrawing;
 
@@ -40,6 +42,7 @@ import static com.mobilesmashers.utils.Constants.EXPLOSION_RADIUS;
 import static com.mobilesmashers.utils.Constants.EXPL_TEXTURE_KEY;
 import static com.mobilesmashers.utils.Constants.FLAT_WALLS_DIM;
 import static com.mobilesmashers.utils.Constants.HOOK_RADIUS;
+import static com.mobilesmashers.utils.Constants.HOOK_SPAWN_DISTANCE;
 import static com.mobilesmashers.utils.Constants.HOOK_TEXTURE_KEY;
 import static com.mobilesmashers.utils.Constants.PLAYER_SIZE;
 import static com.mobilesmashers.utils.Constants.PLAYER_START_POS;
@@ -54,11 +57,11 @@ import static com.mobilesmashers.utils.Constants.WALL_DIM;
 import static com.mobilesmashers.utils.Constants.WALL_TEXTURE_KEY;
 import static com.mobilesmashers.utils.Constants.WORLD_HEIGHT;
 import static com.mobilesmashers.utils.Constants.WORLD_WIDTH;
-import static com.mobilesmashers.utils.Geo.vectorAngle;
 import static com.mobilesmashers.utils.Randomize.nextFloat;
+import static com.mobilesmashers.utils.WorldUtils.hookSpeed;
 import static com.mobilesmashers.utils.WorldUtils.met_to_pix;
 import static com.mobilesmashers.utils.WorldUtils.pix_to_met;
-import static com.mobilesmashers.utils.WorldUtils.world_center;
+import static com.mobilesmashers.utils.WorldUtils.vectorAngle;
 
 public class GameStage extends Stage implements InputProcessor, ContactListener {
 
@@ -69,7 +72,7 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 	private Player player;
 	private List<Actor> tiedActors;
 	private List<GameBody> toRemove;
-
+	private List<Rope> toFuse; // FIXME: consider using single List<Rope> instead of tiedActors and toFuse arrays
 	private HashMap<String, Texture> textures;
 
 	public GameStage() {
@@ -88,7 +91,7 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 		initClasses();
 		createTextures();
 		createWorld();
-		createBalls();
+		createTasks();
 		createPlayer();
 		createWalls();
 	}
@@ -114,6 +117,12 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 				world.destroyBody(gb.getBody());
 				toRemove.remove(0);
 			}
+
+			while (toFuse.size() > 0) {
+				Rope rope = toFuse.get(0);
+				rope.fuse();
+				toFuse.remove(0);
+			}
 		}
 	}
 
@@ -130,6 +139,8 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 
 		super.dispose();
 	}
+
+	/* INPUT HANDLING */
 
 	@Override
 	public boolean keyDown(int keycode) {
@@ -151,8 +162,8 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-		screenX = (int) VIEWPORT_WIDTH - screenX; // our origin is bottom, not top
-		shoot(pix_to_met(screenX), pix_to_met(screenY));
+		int screenY_transformed = (int) VIEWPORT_HEIGHT - screenY; // we need origin at bottom
+		shoot(pix_to_met(screenX), pix_to_met(screenY_transformed));
 		return super.touchDown(screenX, screenY, pointer, button);
 	}
 
@@ -176,13 +187,7 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 		return super.scrolled(amount);
 	}
 
-	@Override
-	public void preSolve(Contact contact, Manifold manifold) {
-	}
-
-	@Override
-	public void postSolve(Contact contact, ContactImpulse contactImpulse) {
-	}
+	/* CONTACT LISTENER */
 
 	@Override
 	public void beginContact(Contact contact) {
@@ -193,10 +198,24 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 				aClass = a.getClass(),
 				bClass = b.getClass();
 
+		// TODO: add player hook catching
 		if (aClass == Hook.class || bClass == Hook.class) {
-			if ((aClass == Ball.class || bClass == Ball.class) ||
-					(aClass == Player.class || bClass == Player.class))
+			if ((aClass == Ball.class || bClass == Ball.class))
 				tie(a, b);
+		} else if (aClass == Ball.class && bClass == Ball.class) {
+			Ball
+					ballA = ((Ball) a),
+					ballB = ((Ball) b);
+			if (ballA.isSensor() && ballB.isSensor()) {
+				toRemove.add(ballA);
+				toRemove.add(ballB);
+				ballA.getRope().remove();
+
+				if(!ballA.match(ballB)) {
+					gameOn = false;
+					explode(a, b);
+				}
+			}
 		} else if (a == player || b == player) {
 			if (aClass == Ball.class
 					|| bClass == Ball.class) {
@@ -210,10 +229,17 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 	public void endContact(Contact contact) {
 	}
 
-	private void tie(Object a, Object b) {
+	@Override
+	public void preSolve(Contact contact, Manifold manifold) {
+	}
 
-		if (a.getClass() == Player.class)
-			return;
+	@Override
+	public void postSolve(Contact contact, ContactImpulse contactImpulse) {
+	}
+
+	/* HELPER FUNCTIONS */
+
+	private void tie(Object a, Object b) {
 
 		if (a.getClass() == Ball.class) {
 			Object temp = a;
@@ -223,31 +249,42 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 
 		Ball ball = (Ball) b;
 		Hook hook = (Hook) a;
+		Rope rope = hook.getRope();
 
 		for (Actor actor : tiedActors)
 			if (actor == ball)
 				return;
 
-		hook.getRope().replaceEnd(hook, (Ball) b);
+		rope.replaceEnd(hook, ball);
 		tiedActors.add(ball);
 		toRemove.add(hook);
+
+		startFusion(rope);
 	}
 
 	private void shoot(float dirX, float dirY) {
-		float vx = dirX, vy = dirY;
-		//Vector2 pos = player.getPosition();
-		Vector2 pos = world_center();
-		float angle = vectorAngle(pos.x, pos.y, dirX, dirY);
+		Vector2
+				pos = player.getBodyPosition(),
+				vel = player.getLinearVelocity();
+		float
+				speed = hookSpeed(Vector2.dst(pos.x, pos.y, dirX, dirY)),
+				angle = vectorAngle(pos.x, pos.y, dirX, dirY),
+				cosAngle = MathUtils.cos(angle),
+				sinAngle = MathUtils.sin(angle),
+				posX = pos.x + PLAYER_SIZE.x / 2f + cosAngle * HOOK_SPAWN_DISTANCE,
+				posY = pos.y + PLAYER_SIZE.y / 2f + sinAngle * HOOK_SPAWN_DISTANCE,
+				vx = speed * cosAngle + vel.x,
+				vy = speed * sinAngle + vel.y;
 
 		if (player.rope != null) {
-			Hook hook = spawnHook(pos.x, pos.y, vx, vy, angle);
+			Hook hook = spawnHook(posX, posY, vx, vy);
 			hook.setRope(player.rope);
 			player.rope.setTail(hook);
 			player.rope = null;
 			tiedActors.remove(player);
 		} else if (player.ropeNumber > 0) {
 			player.ropeNumber -= 1;
-			Hook hook = spawnHook(pos.x, pos.y, vx, vy, angle);
+			Hook hook = spawnHook(posX, posY, vx, vy);
 			Rope rope = new Rope(
 					Constants.ROPE_THICKNESS_PX,
 					hook,
@@ -259,15 +296,19 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 			addActor(rope);
 			tiedActors.add(player);
 		}
-		// TODO: correct Geo.vectorAngle function (make sure you don't fu up Rope drawing)
 		// FIXME: make hook bodies spawn outside of player body
 	}
 
-	private Hook spawnHook(float x, float y, float vx, float vy, float angle) {
+	private Hook spawnHook(float x, float y, float vx, float vy) {
 		Hook hook = new Hook(world, x, y, Constants.HOOK_RADIUS, textures.get(HOOK_TEXTURE_KEY));
-		hook.setLinearVelocity(MathUtils.cos(angle + MathUtils.PI), MathUtils.sin(angle + MathUtils.PI));
+		hook.setLinearVelocity(vx, vy);
 		addActor(hook);
 		return hook;
+	}
+
+	private void startFusion(Rope rope) {
+		// FIXME: consider doing rope.fuse check here, instead in the Rope class (to avoid method call overhead)
+		toFuse.add(rope);
 	}
 
 	private void explode(Object a, Object b) {
@@ -281,6 +322,8 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 		);
 		addActor(explosion);
 	}
+
+	/* INITIALIZATION */
 
 	private void createTextures() {
 		textures = new HashMap<String, Texture>();
@@ -297,6 +340,7 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 		accumulator = 0;
 		tiedActors = new ArrayList<Actor>();
 		toRemove = new ArrayList<GameBody>();
+		toFuse = new ArrayList<Rope>();
 	}
 
 	private void initClasses() {
@@ -309,6 +353,7 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 		world.setContactListener(this);
 	}
 
+	/*
 	private void createBalls() {
 		for (int i = 0; i < Constants.BALL_NUMBER; ++i) {
 			Vector2 pos = new Vector2(
@@ -332,6 +377,42 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 			);
 			addActor(ball);
 		}
+	}
+	*/
+
+	private void createTasks() {
+		for (int i = 0; i < Constants.TASK_NUMBER; ++i) {
+			Vector2
+					posA = new Vector2(PLAYER_START_POS.x, PLAYER_START_POS.y),
+					posB = new Vector2(PLAYER_START_POS.x, PLAYER_START_POS.y);
+
+			while (posA.dst(PLAYER_START_POS) < BALL_MIN_DST_FROM_PLAYER) {
+				posA.x = nextFloat(WORLD_WIDTH);
+				posA.y = nextFloat(WORLD_HEIGHT);
+			}
+			while (posB.dst(PLAYER_START_POS) < BALL_MIN_DST_FROM_PLAYER) {
+				posB.x = nextFloat(WORLD_WIDTH);
+				posB.y = nextFloat(WORLD_HEIGHT);
+			}
+
+			Task[] tasks = Parity.createTask(2);
+			Ball
+					ballA = new Ball(world, posA.x, posA.y, BALL_RADIUS, tasks[0],
+							textures.get(BALL_TEXTURE_KEY)),
+					ballB = new Ball( world, posB.x, posB.y, BALL_RADIUS, tasks[1],
+							textures.get(BALL_TEXTURE_KEY));
+			ballA.setLinearVelocity(
+					nextFloat(BALL_MAX_INIT_SPEED.x),
+					nextFloat(BALL_MAX_INIT_SPEED.y)
+			);
+			ballB.setLinearVelocity(
+					nextFloat(BALL_MAX_INIT_SPEED.x),
+					nextFloat(BALL_MAX_INIT_SPEED.y)
+			);
+			addActor(ballA);
+			addActor(ballB);
+		}
+
 	}
 
 	private void createPlayer() {

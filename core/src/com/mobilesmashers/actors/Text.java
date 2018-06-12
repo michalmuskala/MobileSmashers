@@ -1,20 +1,24 @@
-package com.mobilesmashers.utils.wywalic;
+package com.mobilesmashers.actors;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 
 import static com.badlogic.gdx.graphics.Texture.TextureFilter.Linear;
 
-public class Text extends Shape {
+public class Text extends Actor {
 
 	protected BitmapFont bitmapFont;
 	protected String text;
 
-	public Text(Vector2 position, String text, Color color, float scale) {
-		super(position);
+	public Text(float x, float y, String text, Color color, float scale) {
+		this(text, color, scale);
+		setX(x);
+		setY(y);
+	}
 
+	public Text(String text, Color color, float scale) {
 		this.text = text;
 
 		bitmapFont = new BitmapFont();
@@ -23,7 +27,8 @@ public class Text extends Shape {
 		bitmapFont.getData().setScale(scale);
 	}
 
-	public void draw(Batch batch) {
-		bitmapFont.draw(batch, text, position.x, position.y);
+	@Override
+	public void draw(Batch batch, float parentAlpha) {
+		bitmapFont.draw(batch, text, getX(), getY());
 	}
 }

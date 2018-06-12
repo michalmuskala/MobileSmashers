@@ -1,5 +1,6 @@
 package com.mobilesmashers.utils;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
@@ -20,6 +21,11 @@ public final class WorldUtils {
 		return pix / Constants.PIX_PER_METER;
 	}
 
+	@Contract(pure = true)
+	public static float hookSpeed(float v) {
+		return Math.abs(v) < Constants.HOOK_MAX_SPEED ? v : Constants.HOOK_MAX_SPEED;
+	}
+
 	@NotNull
 	public static Vector2 world_center() {
 		return new Vector2(Constants.WORLD_WIDTH / 2, Constants.WORLD_HEIGHT / 2);
@@ -31,6 +37,15 @@ public final class WorldUtils {
 				(Constants.WORLD_WIDTH - el_width) / 2,
 				(Constants.WORLD_HEIGHT - el_height) / 2
 		);
+	}
+
+	public static float vectorAngle(Vector2 beg, Vector2 end) {
+		return vectorAngle(beg.x, beg.y, end.x, end.y);
+	}
+
+	public static float vectorAngle(float begX, float begY, float endX, float endY) {
+		// no idea why this werks
+		return MathUtils.atan2(endY - begY, endX - begX);
 	}
 
 	@NotNull

@@ -2,6 +2,8 @@ package com.mobilesmashers.actors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -46,6 +48,7 @@ public class Player extends GameBody {
 	public Player(World world, float x, float y, float width, float height, Texture texture) {
 		super(createBody(world, x, y, width, height), texture);
 		setSize(met_to_pix(width), met_to_pix(height));
+		body.setFixedRotation(true);
 		body.setUserData(this);
 		ropeNumber = Constants.PLAYER_ROPE_CAPACITY;
 	}
@@ -53,12 +56,12 @@ public class Player extends GameBody {
 	@Override
 	public void act(float delta) {
 		super.act(delta);
+		setRotation(MathUtils.radiansToDegrees * body.getAngle());
 
 		float
-				vx = Gdx.input.getAccelerometerY(),
-				vy = -Gdx.input.getAccelerometerX();
+				ax = Gdx.input.getAccelerometerY(),
+				ay = -Gdx.input.getAccelerometerX();
 
-
-		body.setLinearVelocity(vx, vy);
+		body.applyForceToCenter(ax, ay, true);
 	}
 }

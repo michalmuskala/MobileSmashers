@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
 import static com.badlogic.gdx.math.MathUtils.radiansToDegrees;
-import static com.mobilesmashers.utils.Geo.vectorAngle;
+import static com.mobilesmashers.utils.WorldUtils.vectorAngle;
 
 public class Rope extends GameActor {
 
@@ -73,5 +73,17 @@ public class Rope extends GameActor {
 			head = newEnd;
 		else
 			tail = newEnd;
+	}
+
+	public void fuse() {
+		if (head.getClass() == Ball.class)
+			if (tail.getClass() == Ball.class) {
+				Ball
+						ballH = ((Ball) head),
+						ballT = ((Ball) tail);
+				ballH.setRope(this);
+				ballT.setRope(this);
+				ballH.fuse(ballT);
+			}
 	}
 }

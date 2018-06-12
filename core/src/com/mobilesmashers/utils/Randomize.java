@@ -7,6 +7,13 @@ public final class Randomize {
 	private static Random random = new Random();
 
 	/**
+	 * @return - random boolean
+	 */
+	public static boolean nextBoolean() {
+		return random.nextBoolean();
+	}
+
+	/**
 	 * @param n - parameter
 	 * @return - random integer in [0, n-1]
 	 */
