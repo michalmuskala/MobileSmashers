@@ -9,7 +9,7 @@ import static com.badlogic.gdx.graphics.Texture.TextureFilter.Linear;
 
 public class Text extends Shape {
 
-	protected BitmapFont bitmapFont;
+	protected static BitmapFont bitmapFont;
 	protected String text;
 
 	public Text(Point position, String text, Color color, float scale) {
@@ -25,5 +25,16 @@ public class Text extends Shape {
 
 	public void draw(Batch batch) {
 		bitmapFont.draw(batch, text, position.x, position.y);
+	}
+
+	public static BitmapFont getBitmapFont() {
+		if(bitmapFont == null)
+		{
+			bitmapFont = new BitmapFont();
+			bitmapFont.setColor(Color.ORANGE);
+			bitmapFont.getRegion().getTexture().setFilter(Linear, Linear);
+			bitmapFont.getData().setScale(3);
+		}
+		return bitmapFont;
 	}
 }
