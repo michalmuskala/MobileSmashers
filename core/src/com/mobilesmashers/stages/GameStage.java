@@ -2,10 +2,7 @@ package com.mobilesmashers.stages;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Contact;
@@ -17,9 +14,11 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
+import com.mobilesmashers.MobileSmashers;
 import com.mobilesmashers.actors.Ball;
 import com.mobilesmashers.actors.CircleDynamicBody;
 import com.mobilesmashers.actors.Explosion;
+import com.mobilesmashers.actors.GameActor;
 import com.mobilesmashers.actors.GameBody;
 import com.mobilesmashers.actors.Hook;
 import com.mobilesmashers.actors.Player;
@@ -28,52 +27,54 @@ import com.mobilesmashers.actors.Wall;
 import com.mobilesmashers.tasks.Parity;
 import com.mobilesmashers.tasks.Task;
 import com.mobilesmashers.utils.Constants;
-import com.mobilesmashers.utils.ShapeDrawing;
+import com.mobilesmashers.utils.TextureUtils;
+import com.mobilesmashers.utils.WorldUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
+import static com.mobilesmashers.utils.Constants.APP_HEIGHT;
+import static com.mobilesmashers.utils.Constants.APP_WIDTH;
 import static com.mobilesmashers.utils.Constants.BALL_MAX_INIT_SPEED;
 import static com.mobilesmashers.utils.Constants.BALL_MIN_DST_FROM_PLAYER;
 import static com.mobilesmashers.utils.Constants.BALL_RADIUS;
-import static com.mobilesmashers.utils.Constants.BALL_TEXTURE_KEY;
-import static com.mobilesmashers.utils.Constants.EXPLOSION_RADIUS;
-import static com.mobilesmashers.utils.Constants.EXPL_TEXTURE_KEY;
 import static com.mobilesmashers.utils.Constants.FLAT_WALLS_DIM;
-import static com.mobilesmashers.utils.Constants.HOOK_RADIUS;
 import static com.mobilesmashers.utils.Constants.HOOK_SPAWN_DISTANCE;
-import static com.mobilesmashers.utils.Constants.HOOK_TEXTURE_KEY;
 import static com.mobilesmashers.utils.Constants.PLAYER_SIZE;
 import static com.mobilesmashers.utils.Constants.PLAYER_START_POS;
-import static com.mobilesmashers.utils.Constants.PLER_TEXTURE_KEY;
-import static com.mobilesmashers.utils.Constants.ROPE_TEXTURE_KEY;
-import static com.mobilesmashers.utils.Constants.ROPE_THICKNESS_PX;
 import static com.mobilesmashers.utils.Constants.SIDE_WALLS_DIM;
+import static com.mobilesmashers.utils.Constants.TEXTURE_BALL_KEY;
+import static com.mobilesmashers.utils.Constants.TEXTURE_EXPL_KEY;
+import static com.mobilesmashers.utils.Constants.TEXTURE_HOOK_KEY;
+import static com.mobilesmashers.utils.Constants.TEXTURE_ROPE_KEY;
+import static com.mobilesmashers.utils.Constants.TEXTURE_WALL_KEY;
 import static com.mobilesmashers.utils.Constants.TIME_STEP;
 import static com.mobilesmashers.utils.Constants.VIEWPORT_HEIGHT;
 import static com.mobilesmashers.utils.Constants.VIEWPORT_WIDTH;
 import static com.mobilesmashers.utils.Constants.WALL_DIM;
-import static com.mobilesmashers.utils.Constants.WALL_TEXTURE_KEY;
 import static com.mobilesmashers.utils.Constants.WORLD_HEIGHT;
 import static com.mobilesmashers.utils.Constants.WORLD_WIDTH;
-import static com.mobilesmashers.utils.Randomize.nextFloat;
+import static com.mobilesmashers.utils.RandomUtils.nextFloat;
 import static com.mobilesmashers.utils.WorldUtils.hookSpeed;
-import static com.mobilesmashers.utils.WorldUtils.met_to_pix;
 import static com.mobilesmashers.utils.WorldUtils.pix_to_met;
 import static com.mobilesmashers.utils.WorldUtils.vectorAngle;
 
-public class GameStage extends Stage implements InputProcessor, ContactListener {
+public class GameStage extends Stage implements ContactListener {
 
 	private boolean gameOn;
 	private float accumulator;
+	private MobileSmashers game;
 	private World world;
 	private Explosion explosion;
 	private Player player;
 	private List<Actor> tiedActors;
 	private List<GameBody> toRemove;
 	private List<Rope> toFuse; // FIXME: consider using single List<Rope> instead of tiedActors and toFuse arrays
-	private HashMap<String, Texture> textures;
+
+	public GameStage(MobileSmashers game) {
+		this();
+		this.game = game;
+	}
 
 	public GameStage() {
 		super(new ScalingViewport(
@@ -89,12 +90,13 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 
 		initFields();
 		initClasses();
-		createTextures();
 		createWorld();
 		createTasks();
 		createPlayer();
 		createWalls();
 	}
+
+	/* STAGE */
 
 	@Override
 	public void act(float delta) {
@@ -107,6 +109,16 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 			} else if (explosion != null && explosion.getWidth() < 0) {
 				explosion.remove();
 				explosion = null;
+
+				float
+						gotW = WORLD_WIDTH,
+						gotH = WORLD_HEIGHT / 2f;
+				Vector2 gotPos = WorldUtils.world_center(gotW, gotH);
+				GameActor gameOverText = new GameActor(
+						gotPos.x, gotPos.y, gotW, gotH,
+						TextureUtils.textures.get(Constants.TEXTURE_GOVR_KEY)
+				);
+				addActor(gameOverText);
 			}
 			super.act(frameTime);
 			accumulator -= TIME_STEP;
@@ -126,65 +138,71 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 		}
 	}
 
+	/* DISPOSABLE */
+
 	@Override
 	public void dispose() {
 
 		CircleDynamicBody.dispose_class();
 		Wall.dispose_class();
 
-		for (Texture texture : textures.values())
-			texture.dispose();
-
 		world.dispose();
 
 		super.dispose();
 	}
 
-	/* INPUT HANDLING */
-
-	@Override
-	public boolean keyDown(int keycode) {
-		if (keycode == Input.Keys.BACK) {
-			// TODO: make it go to main menu...
-		}
-		return super.keyDown(keycode);
-	}
-
-	@Override
-	public boolean keyUp(int keycode) {
-		return super.keyUp(keycode);
-	}
-
-	@Override
-	public boolean keyTyped(char character) {
-		return super.keyTyped(character);
-	}
+	/* INPUT PROCESSOR */
 
 	@Override
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		int screenY_transformed = (int) VIEWPORT_HEIGHT - screenY; // we need origin at bottom
 		shoot(pix_to_met(screenX), pix_to_met(screenY_transformed));
-		return super.touchDown(screenX, screenY, pointer, button);
+		return false;
+	}
+
+	@Override
+	public boolean keyDown(int keycode) {
+		if (keycode == Input.Keys.BACK) {
+			if (game != null)
+				game.back();
+			else
+				Gdx.app.exit();
+
+			// TODO: add pause while gameOn
+		}
+		return false;
+	}
+
+	// overrides below block useless super calls
+
+	@Override
+	public boolean keyUp(int keycode) {
+		return false;
+	}
+
+	@Override
+	public boolean keyTyped(char character) {
+		return false;
 	}
 
 	@Override
 	public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-		return super.touchUp(screenX, screenY, pointer, button);
+		return false;
 	}
 
 	@Override
 	public boolean touchDragged(int screenX, int screenY, int pointer) {
-		return super.touchDragged(screenX, screenY, pointer);
+		return false;
 	}
 
 	@Override
 	public boolean mouseMoved(int screenX, int screenY) {
-		return super.mouseMoved(screenX, screenY);
+		return false;
 	}
 
 	@Override
 	public boolean scrolled(int amount) {
-		return super.scrolled(amount);
+		return false;
 	}
 
 	/* CONTACT LISTENER */
@@ -211,7 +229,7 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 				toRemove.add(ballB);
 				ballA.getRope().remove();
 
-				if(!ballA.match(ballB)) {
+				if (!ballA.match(ballB)) {
 					gameOn = false;
 					explode(a, b);
 				}
@@ -237,7 +255,7 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 	public void postSolve(Contact contact, ContactImpulse contactImpulse) {
 	}
 
-	/* HELPER FUNCTIONS */
+	/* HELPER METHODS */
 
 	private void tie(Object a, Object b) {
 
@@ -289,7 +307,7 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 					Constants.ROPE_THICKNESS_PX,
 					hook,
 					player,
-					textures.get(ROPE_TEXTURE_KEY)
+					TextureUtils.textures.get(TEXTURE_ROPE_KEY)
 			);
 			hook.setRope(rope);
 			player.rope = rope;
@@ -300,7 +318,7 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 	}
 
 	private Hook spawnHook(float x, float y, float vx, float vy) {
-		Hook hook = new Hook(world, x, y, Constants.HOOK_RADIUS, textures.get(HOOK_TEXTURE_KEY));
+		Hook hook = new Hook(world, x, y, Constants.HOOK_RADIUS, TextureUtils.textures.get(TEXTURE_HOOK_KEY));
 		hook.setLinearVelocity(vx, vy);
 		addActor(hook);
 		return hook;
@@ -318,22 +336,12 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 				Constants.EXPLOSION_IMPLOSION_FACTOR,
 				a.getClass() == Ball.class ? (Ball) a : (Ball) b,
 				player,
-				textures.get(EXPL_TEXTURE_KEY)
+				TextureUtils.textures.get(TEXTURE_EXPL_KEY)
 		);
 		addActor(explosion);
 	}
 
-	/* INITIALIZATION */
-
-	private void createTextures() {
-		textures = new HashMap<String, Texture>();
-		textures.put(BALL_TEXTURE_KEY, ShapeDrawing.disk((int) met_to_pix(BALL_RADIUS), Color.BLUE));
-		textures.put(EXPL_TEXTURE_KEY, ShapeDrawing.disk((int) met_to_pix(EXPLOSION_RADIUS), Color.GOLD));
-		textures.put(HOOK_TEXTURE_KEY, ShapeDrawing.disk((int) met_to_pix(HOOK_RADIUS), Color.GREEN));
-		textures.put(PLER_TEXTURE_KEY, ShapeDrawing.rect((int) met_to_pix(PLAYER_SIZE.x), (int) met_to_pix(PLAYER_SIZE.y), Color.RED));
-		textures.put(ROPE_TEXTURE_KEY, ShapeDrawing.rect(ROPE_THICKNESS_PX, ROPE_THICKNESS_PX, Color.GREEN));
-		textures.put(WALL_TEXTURE_KEY, ShapeDrawing.rect(10, 10, Color.YELLOW));
-	}
+	// init
 
 	private void initFields() {
 		gameOn = true;
@@ -398,9 +406,9 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 			Task[] tasks = Parity.createTask(2);
 			Ball
 					ballA = new Ball(world, posA.x, posA.y, BALL_RADIUS, tasks[0],
-							textures.get(BALL_TEXTURE_KEY)),
-					ballB = new Ball( world, posB.x, posB.y, BALL_RADIUS, tasks[1],
-							textures.get(BALL_TEXTURE_KEY));
+					TextureUtils.textures.get(TEXTURE_BALL_KEY)),
+					ballB = new Ball(world, posB.x, posB.y, BALL_RADIUS, tasks[1],
+							TextureUtils.textures.get(TEXTURE_BALL_KEY));
 			ballA.setLinearVelocity(
 					nextFloat(BALL_MAX_INIT_SPEED.x),
 					nextFloat(BALL_MAX_INIT_SPEED.y)
@@ -422,7 +430,7 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 				PLAYER_START_POS.y,
 				PLAYER_SIZE.x,
 				PLAYER_SIZE.y,
-				textures.get(PLER_TEXTURE_KEY)
+				TextureUtils.textures.get(Constants.TEXTURE_PLER_KEY)
 		);
 		addActor(player);
 	}
@@ -435,7 +443,7 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 				FLAT_WALLS_DIM,
 				WALL_DIM,
 				0,
-				textures.get(WALL_TEXTURE_KEY)
+				TextureUtils.textures.get(TEXTURE_WALL_KEY)
 		));
 		addActor(new Wall(
 				world,
@@ -444,7 +452,7 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 				FLAT_WALLS_DIM,
 				WALL_DIM,
 				0,
-				textures.get(WALL_TEXTURE_KEY)
+				TextureUtils.textures.get(TEXTURE_WALL_KEY)
 		));
 		addActor(new Wall(
 				world,
@@ -453,7 +461,7 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 				WALL_DIM,
 				SIDE_WALLS_DIM,
 				0,
-				textures.get(WALL_TEXTURE_KEY)
+				TextureUtils.textures.get(TEXTURE_WALL_KEY)
 		));
 		addActor(new Wall(
 				world,
@@ -462,7 +470,7 @@ public class GameStage extends Stage implements InputProcessor, ContactListener 
 				WALL_DIM,
 				SIDE_WALLS_DIM,
 				0,
-				textures.get(WALL_TEXTURE_KEY)
+				TextureUtils.textures.get(TEXTURE_WALL_KEY)
 		));
 	}
 }

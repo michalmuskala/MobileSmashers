@@ -2,7 +2,7 @@ package com.mobilesmashers.utils;
 
 import java.util.Random;
 
-public final class Randomize {
+public final class RandomUtils {
 
 	private static Random random = new Random();
 
@@ -39,11 +39,13 @@ public final class Randomize {
 	}
 
 	/**
-	 * Resets randomize class.
+	 * Set the seed for random
+	 * @param seed - seed
 	 */
-	public static void reset() {
-		random = new Random();
+	public static void reset(long seed) {
+		random.setSeed(seed);
 	}
 
-	private Randomize() {}
+	private RandomUtils() {
+	}
 }

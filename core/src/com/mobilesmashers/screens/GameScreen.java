@@ -1,16 +1,17 @@
 package com.mobilesmashers.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
+import com.mobilesmashers.MobileSmashers;
 import com.mobilesmashers.stages.GameStage;
 
-public class GameScreen implements Screen {
+public class GameScreen extends ScreenAdapter {
 
 	private GameStage stage;
 
-	public GameScreen() {
-		stage = new GameStage();
+	public GameScreen(MobileSmashers game) {
+		stage = new GameStage(game);
 	}
 
 	@Override
@@ -20,26 +21,6 @@ public class GameScreen implements Screen {
 
 		stage.act();
 		stage.draw();
-	}
-
-	@Override
-	public void resize(int width, int height) {
-	}
-
-	@Override
-	public void show() {
-	}
-
-	@Override
-	public void hide() {
-	}
-
-	@Override
-	public void pause() {
-	}
-
-	@Override
-	public void resume() {
 	}
 
 	@Override

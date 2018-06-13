@@ -17,8 +17,6 @@ public final class Constants {
 			APP_WIDTH = Gdx.graphics.getWidth(),
 			TASK_NUMBER = 2,
 			PLAYER_ROPE_CAPACITY = TASK_NUMBER / 2 + 2,
-			// BALL_NUMBER = 2,
-			// PLAYER_ROPE_CAPACITY = BALL_NUMBER / 2 + 2,
 			POS_ITERS = 2,
 			ROPE_THICKNESS_PX = 7,
 			TASK_PARITY_MAX = 200,
@@ -55,7 +53,11 @@ public final class Constants {
 			WALL_DENSITY = 0f,
 			WALL_DIM = .05f;
 
-	public static Color BALL_LABEL_COLOR = Color.WHITE;
+	public static final double DEFAULT_VOLUME = 1.;
+
+	public static Color
+			BALL_LABEL_COLOR = Color.WHITE,
+			PLAYER_COLOR = Color.RED;
 
 	public static final Vector2
 			BALL_MAX_INIT_SPEED = new Vector2(2f, 2f),
@@ -63,18 +65,30 @@ public final class Constants {
 			PLAYER_SIZE = new Vector2(.3f, .5f),
 			PLAYER_START_POS = world_center(PLAYER_SIZE.x, PLAYER_SIZE.y);
 
+	public static final String
+			APP_NAME = "MobileSmashers",
+			MUSIC_CATCH_KEY = "sounds/ballCatch.mp3",
+			MUSIC_EXPLO_KEY = "sounds/explosion.wav",
+			MUSIC_LSHOT_KEY = "sounds/lineBack.mp3",
+			MUSIC_SHOOT_KEY = "sounds/lineShoot.mp3",
+			TEXTURE_BACK_KEY = "pictures/background.png",
+			TEXTURE_BALL_KEY = "ball",
+			TEXTURE_EXPL_KEY = "explosion",
+			TEXTURE_GOVR_KEY = "pictures/gameOver.png",
+			TEXTURE_HOOK_KEY = "hook",
+			TEXTURE_INFO_KEY = "pictures/info.png",
+			TEXTURE_LOGO_KEY = "pictures/logo.png",
+			TEXTURE_MENU_KEY = "pictures/menu.png",
+			TEXTURE_PLAY_KEY = "pictures/play.png",
+			TEXTURE_PLER_KEY = "player",
+			TEXTURE_ROPE_KEY = "rope",
+			TEXTURE_SNON_KEY = "pictures/sound_on.png",
+			TEXTURE_SOFF_KEY = "pictures/sound_off.png",
+			TEXTURE_WALL_KEY = "wall";
+
 	public static final float
 			PLAYER_EXCIRCLE_RADIUS = (float) Math.sqrt(PLAYER_SIZE.x * PLAYER_SIZE.x + PLAYER_SIZE.y * PLAYER_SIZE.y) / 2f,
 			HOOK_SPAWN_DISTANCE = PLAYER_EXCIRCLE_RADIUS + HOOK_RADIUS + .0001f;
-
-	public static final String
-			APP_NAME = "MobileSmashers",
-			BALL_TEXTURE_KEY = "ball",
-			EXPL_TEXTURE_KEY = "explosion",
-			HOOK_TEXTURE_KEY = "hook",
-			PLER_TEXTURE_KEY = "player",
-			ROPE_TEXTURE_KEY = "rope",
-			WALL_TEXTURE_KEY = "wall";
 
 	private Constants() {
 	}

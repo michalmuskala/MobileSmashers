@@ -69,4 +69,7 @@ public final class WorldUtils {
 		fixtureDef.shape = shape;
 		return fixtureDef;
 	}
+
+	private WorldUtils() {
+	}
 }

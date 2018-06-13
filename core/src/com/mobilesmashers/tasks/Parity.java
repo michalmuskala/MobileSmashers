@@ -1,14 +1,14 @@
 package com.mobilesmashers.tasks;
 
 import com.mobilesmashers.utils.Constants;
-import com.mobilesmashers.utils.Randomize;
+import com.mobilesmashers.utils.RandomUtils;
 
 public class Parity extends Task {
 
 	private Integer value;
 
 	private Parity() {
-		value = Randomize.nextInt(Constants.TASK_PARITY_MAX);
+		value = RandomUtils.nextInt(Constants.TASK_PARITY_MAX);
 	}
 
 	public static Task[] createTask(int n) {
