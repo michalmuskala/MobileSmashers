@@ -4,81 +4,33 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.mobilesmashers.MobileSmashers;
 import com.mobilesmashers.actors.Text;
-import com.mobilesmashers.utils.AudioUtils;
 import com.mobilesmashers.utils.Constants;
-import com.mobilesmashers.utils.Dimensions;
-import com.mobilesmashers.utils.TextureUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.mobilesmashers.utils.Constants.TEXTURE_BACK_KEY;
-import static com.mobilesmashers.utils.Constants.TEXTURE_INFO_KEY;
-import static com.mobilesmashers.utils.Constants.TEXTURE_LOGO_KEY;
-import static com.mobilesmashers.utils.Constants.TEXTURE_PLAY_KEY;
-import static com.mobilesmashers.utils.Constants.TEXTURE_SNON_KEY;
-import static com.mobilesmashers.utils.Constants.TEXTURE_SOFF_KEY;
+public abstract class MenuScreen extends ScreenAdapter implements InputProcessor {
 
-public class MenuScreen extends ScreenAdapter implements InputProcessor {
+	protected final MobileSmashers game;
+	protected List<Drawable> drawables;
+	protected List<Button> buttons;
+	protected List<Text> texts;
 
-	private final MobileSmashers game;
-	private List<Drawable> drawables;
-	private List<Button> buttons;
-	private Text volumeLabel;
-
-	private Batch batch;
+	protected Batch batch;
 
 	public MenuScreen(final MobileSmashers game) {
 		Gdx.input.setInputProcessor(this);
 		this.game = game;
 		batch = new SpriteBatch();
-
-		createDrawables();
-		createButtons();
-		drawables.addAll(buttons);
-
-		buttons.get(0).action = new ButtonAction() {
-			@Override
-			public void click() {
-				game.start();
-			}
-		};
-		buttons.get(1).action = new ButtonAction() {
-			@Override
-			public void click() {
-				game.info();
-			}
-		};
-		buttons.get(2).action = new ButtonAction() {
-			@Override
-			public void click() {
-				AudioUtils.decreaseVolume();
-				updateVolumeLabel();
-			}
-		};
-		buttons.get(3).action = new ButtonAction() {
-			@Override
-			public void click() {
-				AudioUtils.increaseVolume();
-				updateVolumeLabel();
-			}
-		};
-
-		volumeLabel = new Text(
-				4.6f * Constants.APP_WIDTH / 6f,
-				Constants.APP_HEIGHT / 6f,
-				null,
-				Color.ORANGE,
-				3f
-		);
-		updateVolumeLabel();
+		drawables = new ArrayList<Drawable>();
+		buttons = new ArrayList<Button>();
+		texts = new ArrayList<Text>();
 	}
 
 	@Override
@@ -92,7 +44,9 @@ public class MenuScreen extends ScreenAdapter implements InputProcessor {
 
 		for (Drawable drawable : drawables)
 			drawable.draw(batch);
-		volumeLabel.draw(batch, 1f);
+
+		for (Text text : texts)
+			text.draw(batch, 1f);
 
 		batch.end();
 	}
@@ -146,39 +100,6 @@ public class MenuScreen extends ScreenAdapter implements InputProcessor {
 	@Override
 	public boolean scrolled(int amount) {
 		return false;
-	}
-
-	private void createDrawables() {
-		drawables = new ArrayList<Drawable>();
-		drawables.add(new Drawable(TextureUtils.get(TEXTURE_BACK_KEY),
-				0, 0, Constants.APP_WIDTH, Constants.APP_HEIGHT));
-		drawables.add(new Drawable(TextureUtils.get(TEXTURE_LOGO_KEY),
-				Dimensions.logoBegX, Dimensions.logoBegY,
-				Dimensions.logoHeight, Dimensions.logoWidth));
-	}
-
-	private void createButtons() {
-		buttons = new ArrayList<Button>();
-		buttons.add(new Button(
-				TextureUtils.get(TEXTURE_PLAY_KEY),
-				Dimensions.playBegX, Dimensions.playBegY,
-				Dimensions.playHeight, Dimensions.playWidth));
-		buttons.add(new Button(
-				TextureUtils.get(TEXTURE_INFO_KEY),
-				Dimensions.infoBegX, Dimensions.infoBegY,
-				Dimensions.infoHeight, Dimensions.infoWidth));
-		buttons.add(new Button(
-				TextureUtils.get(TEXTURE_SOFF_KEY),
-				Dimensions.volumeLowerBegX, Dimensions.volumeLowerBegY,
-				Dimensions.volumeLowerHeight, Dimensions.volumeLowerWidth));
-		buttons.add(new Button(
-				TextureUtils.get(TEXTURE_SNON_KEY),
-				Dimensions.volumeHigherBegX, Dimensions.volumeHigherBegY,
-				Dimensions.volumeHigherHeight, Dimensions.volumeHigherWidth));
-	}
-
-	private void updateVolumeLabel() {
-		volumeLabel.setText(String.format("%1$s%%", AudioUtils.getVolume()));
 	}
 
 	protected interface ButtonAction {

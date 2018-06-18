@@ -15,7 +15,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.mobilesmashers.MobileSmashers;
-import com.mobilesmashers.actors.TaskBall;
 import com.mobilesmashers.actors.CircleDynamicBody;
 import com.mobilesmashers.actors.Explosion;
 import com.mobilesmashers.actors.GameActor;
@@ -23,6 +22,7 @@ import com.mobilesmashers.actors.GameBody;
 import com.mobilesmashers.actors.Hook;
 import com.mobilesmashers.actors.Player;
 import com.mobilesmashers.actors.Rope;
+import com.mobilesmashers.actors.TaskBall;
 import com.mobilesmashers.actors.Text;
 import com.mobilesmashers.actors.Wall;
 import com.mobilesmashers.tasks.Addition;
@@ -238,10 +238,10 @@ public class GameStage extends Stage implements ContactListener {
 				if (taskBallA.match(taskBallB) == Task.match.BAD_MATCH) {
 					state = gameState.OVER;
 					explode(a, b);
-				} else if(taskBallA.match(taskBallB) == Task.match.NO_MATCH) { // TODO: when linking multiple balls will be supported
+				} else if (taskBallA.match(taskBallB) == Task.match.NO_MATCH) { // TODO: when linking multiple balls will be supported
 					state = gameState.OVER;
 					explode(a, b);
-				} else if(taskBalls.size() == 0) {
+				} else if (taskBalls.size() == 0) {
 					level += 1;
 					state = gameState.LEVEL_UP;
 				}
@@ -426,7 +426,7 @@ public class GameStage extends Stage implements ContactListener {
 
 	private void createAdditionTasks() {
 		Integer target = Addition.resetTargetValue();
-		Text targetText = new Text(0, 0, target.toString(), Constants.TEXT_TARGET_COLOR, 5f);
+		Text targetText = new Text(0, 0, target.toString(), Constants.TEXT_COLOR, 5f);
 		addActor(targetText);
 		for (int i = 0; i < level; ++i) {
 			int ballNumber = 2;

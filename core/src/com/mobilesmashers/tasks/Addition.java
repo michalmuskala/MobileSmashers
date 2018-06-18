@@ -26,14 +26,14 @@ public class Addition extends Task {
 	}
 
 	public static Task[] createTask(int n) {
-		if(n < 1)
+		if (n < 1)
 			throw new RuntimeException("Parameter n must be > 1.");
 
 		Task[] result = new Task[n];
 		int lastButONe = n - 1;
 		result[0] = new Addition();
 
-		for(int i = 1; i<lastButONe; ++i)
+		for (int i = 1; i < lastButONe; ++i)
 			result[i] = new Addition();
 
 		result[lastButONe] = new Addition(targetValue - counter);

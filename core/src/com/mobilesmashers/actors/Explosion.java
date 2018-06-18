@@ -23,7 +23,7 @@ public class Explosion extends GameActor {
 
 		expanding = true;
 
-		if(delta_radius < 0)
+		if (delta_radius < 0)
 			throw new RuntimeException("Delta radius must be bigger than 0. Moron."); // this shouldn't happen
 
 		this.max_radiusPx = met_to_pix(max_radius);

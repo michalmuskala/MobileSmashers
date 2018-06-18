@@ -42,8 +42,8 @@ public final class AudioUtils {
 
 	public static void decreaseVolume() {
 		volume -= 10;
-		if(volume < 0)
-			volume= 0;
+		if (volume < 0)
+			volume = 0;
 	}
 
 	public static abstract class AudioWrapper implements Disposable {

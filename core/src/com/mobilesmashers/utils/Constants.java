@@ -58,7 +58,7 @@ public final class Constants {
 			HOOK_COLOR = Color.GREEN,
 			PLAYER_COLOR = Color.RED,
 			ROPE_COLOR = Color.GREEN,
-			TEXT_TARGET_COLOR = Color.ORANGE,
+			TEXT_COLOR = Color.ORANGE,
 			WALL_COLOR = Color.YELLOW;
 
 	public static final Vector2

@@ -3,7 +3,6 @@ package com.mobilesmashers.actors;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.Fixture;
 
 import static com.mobilesmashers.utils.WorldUtils.met_to_pix;
 

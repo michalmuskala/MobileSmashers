@@ -22,7 +22,6 @@ public final class RandomUtils {
 	}
 
 	/**
-	 *
 	 * @param min - minimum number
 	 * @param max - maximum number minus pne
 	 * @return - random integer in [min, max-1]
@@ -50,6 +49,7 @@ public final class RandomUtils {
 
 	/**
 	 * Set the seed for random
+	 *
 	 * @param seed - seed
 	 */
 	public static void reset(long seed) {

@@ -3,9 +3,8 @@ package com.mobilesmashers;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.mobilesmashers.screens.GameScreen;
-import com.mobilesmashers.screens.InfoScreen;
+import com.mobilesmashers.screens.InfoMenuScreen;
 import com.mobilesmashers.screens.MainMenuScreen;
-import com.mobilesmashers.screens.MenuScreen;
 import com.mobilesmashers.utils.AudioUtils;
 import com.mobilesmashers.utils.Constants;
 import com.mobilesmashers.utils.TextureUtils;
@@ -25,7 +24,7 @@ public class MobileSmashers extends Game {
 
 		createGameAssets();
 
-		setScreen(new MenuScreen(this));
+		setScreen(new MainMenuScreen(this));
 	}
 
 	@Override
@@ -44,7 +43,7 @@ public class MobileSmashers extends Game {
 
 	public void info() {
 		screen.dispose();
-		setScreen(new InfoScreen(this));
+		setScreen(new InfoMenuScreen(this));
 	}
 
 	public void back() {
@@ -52,7 +51,7 @@ public class MobileSmashers extends Game {
 			Gdx.app.exit();
 		} else {
 			screen.dispose();
-			setScreen(new MenuScreen(this));
+			setScreen(new MainMenuScreen(this));
 		}
 	}
 
