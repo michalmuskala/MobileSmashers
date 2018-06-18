@@ -10,28 +10,44 @@ import java.util.HashMap;
 
 public final class AudioUtils {
 
-	public static HashMap<String, AudioWrapper> audio = new HashMap<String, AudioWrapper>();
+	private static HashMap<String, AudioWrapper> audio = new HashMap<String, AudioWrapper>();
 
-	private static double volume = Constants.DEFAULT_VOLUME;
+	private static int volume = Constants.DEFAULT_VOLUME;
 
 	public static void load(String... paths) {
 		for (String path : paths)
 			audio.put(path, new MusicWrapper(path));
 	}
 
-	@Contract(pure = true)
-	public static int getVolume() {
-		return (int) volume;
+	public static void play(String key) {
+		audio.get(key).play();
 	}
 
-	public static void setVolume(int v) {
-		v = Math.max(v, 0);
-		v = Math.min(v, 100);
-		volume = ((double) v) / 100.;
+	@Contract(pure = true)
+	public static int getVolume() {
+		return volume;
+	}
+
+	public static void setVolume(int vol) {
+		vol = Math.max(vol, 0);
+		vol = Math.min(vol, 100);
+		volume = vol;
+	}
+
+	public static void increaseVolume() {
+		volume += 10;
+		if (volume > 100)
+			volume = 100;
+	}
+
+	public static void decreaseVolume() {
+		volume -= 10;
+		if(volume < 0)
+			volume= 0;
 	}
 
 	public static abstract class AudioWrapper implements Disposable {
-		public double volume = 1.;
+		public float volume = 1f;
 
 		public abstract void play();
 	}
@@ -49,6 +65,7 @@ public final class AudioUtils {
 		}
 
 		public void play() {
+			music.setVolume(AudioUtils.volume / 100f);
 			music.play();
 		}
 	}

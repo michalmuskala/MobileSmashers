@@ -12,7 +12,7 @@ import com.mobilesmashers.utils.Constants;
 import static com.mobilesmashers.utils.WorldUtils.newFixtureDef;
 import static com.mobilesmashers.utils.WorldUtils.vectorAngle;
 
-public class Ball extends CircleDynamicBody {
+public class TaskBall extends CircleDynamicBody {
 
 	private static FixtureDef fixtureDef;
 
@@ -30,7 +30,7 @@ public class Ball extends CircleDynamicBody {
 	public Task task;
 	public Text label;
 
-	public Ball(World world, float x, float y, float radius, Task task, Texture texture) {
+	public TaskBall(World world, float x, float y, float radius, Task task, Texture texture) {
 		super(world, fixtureDef, x, y, radius, texture);
 		body.setUserData(this);
 		fixture = body.getFixtureList().first();
@@ -50,29 +50,29 @@ public class Ball extends CircleDynamicBody {
 		label.draw(batch, parentAlpha);
 	}
 
-	public void fuse(Ball ball) {
+	public void fuse(TaskBall taskBall) {
 		fixture.setSensor(true);
 
-		if (ball != null)
-			ball.fuse(null);
+		if (taskBall != null)
+			taskBall.fuse(null);
 		else
 			return;
 
 		float
-				angle = vectorAngle(body.getPosition(), ball.getBodyPosition()),
+				angle = vectorAngle(body.getPosition(), taskBall.getBodyPosition()),
 				vx = MathUtils.cos(angle) * Constants.BALL_FUSION_FORCE,
 				vy = MathUtils.sin(angle) * Constants.BALL_FUSION_FORCE;
 
 		setLinearVelocity(vx, vy);
-		ball.setLinearVelocity(-vx, -vy);
+		taskBall.setLinearVelocity(-vx, -vy);
 	}
 
 	public Rope getRope() {
 		return rope;
 	}
 
-	public boolean match(Ball ball) {
-		return task.match(ball.task);
+	public Task.match match(TaskBall taskBall) {
+		return task.isMatch(taskBall.task);
 	}
 
 	public boolean isSensor() {

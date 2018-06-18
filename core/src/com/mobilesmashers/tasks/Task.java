@@ -4,7 +4,7 @@ public abstract class Task {
 
 	public abstract String getValue();
 
-	public abstract boolean match(Task task);
+	public abstract match isMatch(Task task);
 
 	public String toString() {
 		return String.format(
@@ -12,5 +12,11 @@ public abstract class Task {
 				this.getClass().toString(),
 				getValue()
 		);
+	}
+
+	public enum match {
+		BAD_MATCH,
+		GOOD_MATCH,
+		NO_MATCH;
 	}
 }

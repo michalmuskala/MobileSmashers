@@ -8,11 +8,15 @@ import java.util.HashMap;
 
 public final class TextureUtils {
 
-	public static HashMap<String, Texture> textures = new HashMap<String, Texture>();
+	private static HashMap<String, Texture> textures = new HashMap<String, Texture>();
 
 	public static void load(String... keys) {
 		for (String key : keys)
 			textures.put(key, new Texture(key));
+	}
+
+	public static Texture get(String key) {
+		return textures.get(key);
 	}
 
 	public static Texture createDisk(String key, int radius, Color color) {

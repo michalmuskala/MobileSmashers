@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -13,24 +14,24 @@ import com.mobilesmashers.actors.Text;
 import com.mobilesmashers.utils.AudioUtils;
 import com.mobilesmashers.utils.Constants;
 import com.mobilesmashers.utils.Dimensions;
+import com.mobilesmashers.utils.TextureUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.badlogic.gdx.graphics.Color.ORANGE;
 import static com.mobilesmashers.utils.Constants.TEXTURE_BACK_KEY;
 import static com.mobilesmashers.utils.Constants.TEXTURE_INFO_KEY;
 import static com.mobilesmashers.utils.Constants.TEXTURE_LOGO_KEY;
 import static com.mobilesmashers.utils.Constants.TEXTURE_PLAY_KEY;
 import static com.mobilesmashers.utils.Constants.TEXTURE_SNON_KEY;
 import static com.mobilesmashers.utils.Constants.TEXTURE_SOFF_KEY;
-import static com.mobilesmashers.utils.TextureUtils.textures;
 
 public class MenuScreen extends ScreenAdapter implements InputProcessor {
 
 	private final MobileSmashers game;
 	private List<Drawable> drawables;
 	private List<Button> buttons;
+	private Text volumeLabel;
 
 	private Batch batch;
 
@@ -46,9 +47,38 @@ public class MenuScreen extends ScreenAdapter implements InputProcessor {
 		buttons.get(0).action = new ButtonAction() {
 			@Override
 			public void click() {
-				game.startGame();
+				game.start();
 			}
 		};
+		buttons.get(1).action = new ButtonAction() {
+			@Override
+			public void click() {
+				game.info();
+			}
+		};
+		buttons.get(2).action = new ButtonAction() {
+			@Override
+			public void click() {
+				AudioUtils.decreaseVolume();
+				updateVolumeLabel();
+			}
+		};
+		buttons.get(3).action = new ButtonAction() {
+			@Override
+			public void click() {
+				AudioUtils.increaseVolume();
+				updateVolumeLabel();
+			}
+		};
+
+		volumeLabel = new Text(
+				4.6f * Constants.APP_WIDTH / 6f,
+				Constants.APP_HEIGHT / 6f,
+				null,
+				Color.ORANGE,
+				3f
+		);
+		updateVolumeLabel();
 	}
 
 	@Override
@@ -58,13 +88,11 @@ public class MenuScreen extends ScreenAdapter implements InputProcessor {
 
 	@Override
 	public void render(float delta) {
-
 		batch.begin();
+
 		for (Drawable drawable : drawables)
 			drawable.draw(batch);
-
-		Text volumeLevel = new Text(4.6f * Constants.APP_WIDTH / 6f, Constants.APP_HEIGHT / 6f, String.valueOf(AudioUtils.getVolume() * 10) + "%", ORANGE, 3f);
-		volumeLevel.draw(batch, 1f);
+		volumeLabel.draw(batch, 1f);
 
 		batch.end();
 	}
@@ -75,8 +103,8 @@ public class MenuScreen extends ScreenAdapter implements InputProcessor {
 	public boolean touchDown(int screenX, int screenY, int pointer, int button) {
 		int screenY_transformed = Constants.APP_HEIGHT - screenY;
 
-		for(Button b : buttons)
-			if(b.action != null && b.ifClicked(screenX, screenY_transformed)) { // FIXME:
+		for (Button b : buttons)
+			if (b.action != null && b.ifClicked(screenX, screenY_transformed)) {
 				b.action.click();
 				return true;
 			}
@@ -122,9 +150,9 @@ public class MenuScreen extends ScreenAdapter implements InputProcessor {
 
 	private void createDrawables() {
 		drawables = new ArrayList<Drawable>();
-		drawables.add(new Drawable(textures.get(TEXTURE_BACK_KEY),
+		drawables.add(new Drawable(TextureUtils.get(TEXTURE_BACK_KEY),
 				0, 0, Constants.APP_WIDTH, Constants.APP_HEIGHT));
-		drawables.add(new Drawable(textures.get(TEXTURE_LOGO_KEY),
+		drawables.add(new Drawable(TextureUtils.get(TEXTURE_LOGO_KEY),
 				Dimensions.logoBegX, Dimensions.logoBegY,
 				Dimensions.logoHeight, Dimensions.logoWidth));
 	}
@@ -132,21 +160,25 @@ public class MenuScreen extends ScreenAdapter implements InputProcessor {
 	private void createButtons() {
 		buttons = new ArrayList<Button>();
 		buttons.add(new Button(
-				textures.get(TEXTURE_PLAY_KEY),
+				TextureUtils.get(TEXTURE_PLAY_KEY),
 				Dimensions.playBegX, Dimensions.playBegY,
 				Dimensions.playHeight, Dimensions.playWidth));
 		buttons.add(new Button(
-				textures.get(TEXTURE_INFO_KEY),
+				TextureUtils.get(TEXTURE_INFO_KEY),
 				Dimensions.infoBegX, Dimensions.infoBegY,
 				Dimensions.infoHeight, Dimensions.infoWidth));
 		buttons.add(new Button(
-				textures.get(TEXTURE_SOFF_KEY),
+				TextureUtils.get(TEXTURE_SOFF_KEY),
 				Dimensions.volumeLowerBegX, Dimensions.volumeLowerBegY,
 				Dimensions.volumeLowerHeight, Dimensions.volumeLowerWidth));
 		buttons.add(new Button(
-				textures.get(TEXTURE_SNON_KEY),
+				TextureUtils.get(TEXTURE_SNON_KEY),
 				Dimensions.volumeHigherBegX, Dimensions.volumeHigherBegY,
 				Dimensions.volumeHigherHeight, Dimensions.volumeHigherWidth));
+	}
+
+	private void updateVolumeLabel() {
+		volumeLabel.setText(String.format("%1$s%%", AudioUtils.getVolume()));
 	}
 
 	protected interface ButtonAction {

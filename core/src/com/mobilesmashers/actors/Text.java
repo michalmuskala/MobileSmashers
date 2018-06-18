@@ -31,4 +31,12 @@ public class Text extends Actor {
 	public void draw(Batch batch, float parentAlpha) {
 		bitmapFont.draw(batch, text, getX(), getY());
 	}
+
+	public String getText() {
+		return text;
+	}
+
+	public void setText(String text) {
+		this.text = text;
+	}
 }

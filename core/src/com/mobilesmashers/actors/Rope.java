@@ -76,14 +76,14 @@ public class Rope extends GameActor {
 	}
 
 	public void fuse() {
-		if (head.getClass() == Ball.class)
-			if (tail.getClass() == Ball.class) {
-				Ball
-						ballH = ((Ball) head),
-						ballT = ((Ball) tail);
-				ballH.setRope(this);
-				ballT.setRope(this);
-				ballH.fuse(ballT);
+		if (head.getClass() == TaskBall.class)
+			if (tail.getClass() == TaskBall.class) {
+				TaskBall
+						taskBallH = ((TaskBall) head),
+						taskBallT = ((TaskBall) tail);
+				taskBallH.setRope(this);
+				taskBallT.setRope(this);
+				taskBallH.fuse(taskBallT);
 			}
 	}
 }

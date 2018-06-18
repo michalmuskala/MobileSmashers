@@ -22,6 +22,16 @@ public final class RandomUtils {
 	}
 
 	/**
+	 *
+	 * @param min - minimum number
+	 * @param max - maximum number minus pne
+	 * @return - random integer in [min, max-1]
+	 */
+	public static int nextInt(int min, int max) {
+		return random.nextInt((max - min) + 1) + min;
+	}
+
+	/**
 	 * @param n - parameter
 	 * @return - random float in [0, n)
 	 */

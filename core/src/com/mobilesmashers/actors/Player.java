@@ -50,7 +50,6 @@ public class Player extends GameBody {
 		setSize(met_to_pix(width), met_to_pix(height));
 		body.setFixedRotation(true);
 		body.setUserData(this);
-		ropeNumber = Constants.PLAYER_ROPE_CAPACITY;
 	}
 
 	@Override
@@ -59,9 +58,13 @@ public class Player extends GameBody {
 		setRotation(MathUtils.radiansToDegrees * body.getAngle());
 
 		float
-				ax = Gdx.input.getAccelerometerY(),
-				ay = -Gdx.input.getAccelerometerX();
+				vx = Gdx.input.getAccelerometerY(),
+				vy = -Gdx.input.getAccelerometerX();
 
-		body.applyForceToCenter(ax, ay, true);
+		body.setLinearVelocity(vx, vy);
+	}
+
+	public void setRopeNumber(int ropeNumber) {
+		this.ropeNumber = ropeNumber;
 	}
 }

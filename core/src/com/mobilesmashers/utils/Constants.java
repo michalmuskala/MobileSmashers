@@ -4,35 +4,33 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 
-import static com.mobilesmashers.utils.WorldUtils.pix_to_met;
-import static com.mobilesmashers.utils.WorldUtils.world_center;
-
 public final class Constants {
 
 	public static final boolean
 			DO_SLEEP = true;
 
 	public static final int
-			APP_HEIGHT = Gdx.graphics.getHeight(),
 			APP_WIDTH = Gdx.graphics.getWidth(),
-			TASK_NUMBER = 2,
-			PLAYER_ROPE_CAPACITY = TASK_NUMBER / 2 + 2,
+			APP_HEIGHT = Gdx.graphics.getHeight(),
+			DEFAULT_VOLUME = 100,
 			POS_ITERS = 2,
 			ROPE_THICKNESS_PX = 7,
 			TASK_PARITY_MAX = 200,
+			TASK_ADDITI_MAX = 200,
+			TASK_ADDITI_MIN = 20,
 			VEL_ITERS = 6;
 
 	public static final float
 			VIEWPORT_HEIGHT = APP_HEIGHT,
 			VIEWPORT_WIDTH = APP_WIDTH,
 			PIX_PER_METER = 7f * VIEWPORT_WIDTH / 100f,
-			WORLD_HEIGHT = pix_to_met(VIEWPORT_HEIGHT),
-			WORLD_WIDTH = pix_to_met(VIEWPORT_WIDTH),
+			WORLD_HEIGHT = WorldUtils.pix_to_met(VIEWPORT_HEIGHT),
+			WORLD_WIDTH = WorldUtils.pix_to_met(VIEWPORT_WIDTH),
 			BALL_DENSITY = 1f,
 			BALL_FRICTION = 0f,
 			BALL_FUSION_FORCE = 1f,
 			BALL_LABEL_SCALE = 4f,
-			BALL_MIN_DST_FROM_PLAYER = Math.min(WORLD_WIDTH, WORLD_HEIGHT) * .35f,
+			BALL_MIN_DST_FROM_PLAYER = Math.min(WORLD_WIDTH, WORLD_HEIGHT) * .7f,
 			BALL_RADIUS = .5f,
 			BALL_RESTITUTION = 1f,
 			EXPLOSION_IMPLOSION_FACTOR = .2f,
@@ -53,24 +51,30 @@ public final class Constants {
 			WALL_DENSITY = 0f,
 			WALL_DIM = .05f;
 
-	public static final double DEFAULT_VOLUME = 1.;
-
 	public static Color
+			BALL_COLOR = Color.BLUE,
+			EXPLOSION_COLOR = Color.GOLD,
 			BALL_LABEL_COLOR = Color.WHITE,
-			PLAYER_COLOR = Color.RED;
+			HOOK_COLOR = Color.GREEN,
+			PLAYER_COLOR = Color.RED,
+			ROPE_COLOR = Color.GREEN,
+			TEXT_TARGET_COLOR = Color.ORANGE,
+			WALL_COLOR = Color.YELLOW;
 
 	public static final Vector2
 			BALL_MAX_INIT_SPEED = new Vector2(2f, 2f),
 			GRAVITY = new Vector2(0f, 0f),
 			PLAYER_SIZE = new Vector2(.3f, .5f),
-			PLAYER_START_POS = world_center(PLAYER_SIZE.x, PLAYER_SIZE.y);
+			PLAYER_START_POS = WorldUtils.world_center(PLAYER_SIZE.x, PLAYER_SIZE.y);
 
 	public static final String
 			APP_NAME = "MobileSmashers",
 			MUSIC_CATCH_KEY = "sounds/ballCatch.mp3",
 			MUSIC_EXPLO_KEY = "sounds/explosion.wav",
+			MUSIC_INTRO_KEY = "sounds/intro.wav",
 			MUSIC_LSHOT_KEY = "sounds/lineBack.mp3",
 			MUSIC_SHOOT_KEY = "sounds/lineShoot.mp3",
+			MUSIC_SUCCE_KEY = "sounds/success.wav",
 			TEXTURE_BACK_KEY = "pictures/background.png",
 			TEXTURE_BALL_KEY = "ball",
 			TEXTURE_EXPL_KEY = "explosion",
@@ -85,6 +89,26 @@ public final class Constants {
 			TEXTURE_SNON_KEY = "pictures/sound_on.png",
 			TEXTURE_SOFF_KEY = "pictures/sound_off.png",
 			TEXTURE_WALL_KEY = "wall";
+
+	public static final String[]
+			AUDIO_PATHS = {
+					MUSIC_CATCH_KEY,
+					MUSIC_EXPLO_KEY,
+					MUSIC_INTRO_KEY,
+					MUSIC_LSHOT_KEY,
+					MUSIC_SHOOT_KEY,
+					MUSIC_SUCCE_KEY
+			},
+			TEXTURE_PATHS = {
+					TEXTURE_BACK_KEY,
+					TEXTURE_GOVR_KEY,
+					TEXTURE_INFO_KEY,
+					TEXTURE_LOGO_KEY,
+					TEXTURE_MENU_KEY,
+					TEXTURE_PLAY_KEY,
+					TEXTURE_SNON_KEY,
+					TEXTURE_SOFF_KEY
+			};
 
 	public static final float
 			PLAYER_EXCIRCLE_RADIUS = (float) Math.sqrt(PLAYER_SIZE.x * PLAYER_SIZE.x + PLAYER_SIZE.y * PLAYER_SIZE.y) / 2f,
