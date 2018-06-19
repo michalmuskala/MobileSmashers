@@ -30,14 +30,14 @@ public class Dimensions {
 			movingPlayerInfoBegX = Constants.APP_WIDTH / 2 - infoHeight / 2,
 			movingPlayerInfoBegY = Constants.APP_HEIGHT - 270,
 
-			additionWidth = 380,
-			additionHeight = 150,
-			additionBegX = Constants.APP_WIDTH / 15,
+			additionWidth = 180,
+			additionHeight = 650,
+			additionBegX = Constants.APP_WIDTH / 50,
 			additionBegY = Constants.APP_HEIGHT / 7,
 
-			parityWidth = 380,
-			parityHeight = 150,
-			parityBegX = (int) (5.5 * Constants.APP_WIDTH / 15),
+			parityWidth = 180,
+			parityHeight = 550,
+			parityBegX = (int) (8.5 * Constants.APP_WIDTH / 15),
 			parityBegY = Constants.APP_HEIGHT / 7,
 
 			tenthWidth = 380,

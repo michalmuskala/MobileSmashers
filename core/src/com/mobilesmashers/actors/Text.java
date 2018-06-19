@@ -39,4 +39,9 @@ public class Text extends Actor {
 	public void setText(String text) {
 		this.text = text;
 	}
+
+	public BitmapFont getBitmapFont()
+	{
+		return bitmapFont;
+	}
 }

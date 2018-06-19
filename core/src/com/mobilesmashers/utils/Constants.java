@@ -69,6 +69,9 @@ public final class Constants {
 
 	public static final String
 			APP_NAME = "MobileSmashers",
+			INFO_CATCH_KEY = "To join balls, you have to shoot hook in ball by touch.",
+			INFO_GOAL_KEY = "To win each round, you have to join every two balls of same type.",
+			INFO_PLAYERS_MOVE_KEY = "You can move your player by tilting the phone.",
 			MUSIC_CATCH_KEY = "sounds/ballCatch.mp3",
 			MUSIC_EXPLO_KEY = "sounds/explosion.wav",
 			MUSIC_INTRO_KEY = "sounds/intro.wav",
@@ -103,11 +106,13 @@ public final class Constants {
 					MUSIC_SUCCE_KEY
 			},
 			TEXTURE_PATHS = {
+					TEXTURE_ADDITION_KEY,
 					TEXTURE_BACK_KEY,
 					TEXTURE_GOVR_KEY,
 					TEXTURE_INFO_KEY,
 					TEXTURE_LOGO_KEY,
 					TEXTURE_MENU_KEY,
+					TEXTURE_PARITY_KEY,
 					TEXTURE_PLAY_KEY,
 					TEXTURE_SNON_KEY,
 					TEXTURE_SOFF_KEY
