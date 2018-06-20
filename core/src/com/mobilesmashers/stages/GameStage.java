@@ -117,6 +117,8 @@ public class GameStage extends Stage implements ContactListener {
 						gotPos.x, gotPos.y, gotW, gotH,
 						TextureUtils.get(Constants.TEXTURE_GOVR_KEY)
 				));
+
+				AudioUtils.play(Constants.MUSIC_GOVER_KEY);
 			}
 
 			if (state == gameState.LEVEL_UP) {
@@ -232,8 +234,10 @@ public class GameStage extends Stage implements ContactListener {
 				toRemove.add(taskBallB);
 				taskBallA.getRope().remove();
 
+				AudioUtils.play(Constants.MUSIC_MERGE_KEY);
+
 				taskBalls.remove(taskBallA);
-				taskBalls.remove(taskBallB);
+				taskBalls.remove(taskBallB); // taskBalls is needed so the game knows when new level starts. FIXME: this solution sucks
 
 				if (taskBallA.match(taskBallB) == Task.match.BAD_MATCH) {
 					state = gameState.OVER;

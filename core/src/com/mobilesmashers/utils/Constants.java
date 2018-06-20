@@ -69,10 +69,12 @@ public final class Constants {
 
 	public static final String
 			APP_NAME = "MobileSmashers",
-			MUSIC_CATCH_KEY = "sounds/ballCatch.mp3",
+			MUSIC_CATCH_KEY = "sounds/ballCatch.wav",
 			MUSIC_EXPLO_KEY = "sounds/explosion.wav",
+			MUSIC_GOVER_KEY = "sounds/gameOver.wav",
 			MUSIC_INTRO_KEY = "sounds/intro.wav",
 			MUSIC_LSHOT_KEY = "sounds/lineBack.mp3",
+			MUSIC_MERGE_KEY = "sounds/ballMerge.wav",
 			MUSIC_SHOOT_KEY = "sounds/lineShoot.mp3",
 			MUSIC_SUCCE_KEY = "sounds/success.wav",
 			TEXTURE_ADDITION_KEY = "pictures/addition.png",
@@ -97,8 +99,10 @@ public final class Constants {
 			AUDIO_PATHS = {
 					MUSIC_CATCH_KEY,
 					MUSIC_EXPLO_KEY,
+					MUSIC_GOVER_KEY,
 					MUSIC_INTRO_KEY,
 					MUSIC_LSHOT_KEY,
+					MUSIC_MERGE_KEY,
 					MUSIC_SHOOT_KEY,
 					MUSIC_SUCCE_KEY
 			},
