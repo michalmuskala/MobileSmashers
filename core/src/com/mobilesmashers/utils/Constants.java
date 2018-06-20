@@ -12,7 +12,7 @@ public final class Constants {
 	public static final int
 			APP_WIDTH = Gdx.graphics.getWidth(),
 			APP_HEIGHT = Gdx.graphics.getHeight(),
-			DEFAULT_VOLUME = 100,
+			DEFAULT_VOLUME = 50,
 			POS_ITERS = 2,
 			ROPE_THICKNESS_PX = 7,
 			TASK_PARITY_MAX = 200,
@@ -69,9 +69,6 @@ public final class Constants {
 
 	public static final String
 			APP_NAME = "MobileSmashers",
-			INFO_CATCH_KEY = "To join balls, you have to shoot hook in ball by touch.",
-			INFO_GOAL_KEY = "To win each round, you have to join every two balls of same type.",
-			INFO_PLAYERS_MOVE_KEY = "You can move your player by tilting the phone.",
 			MUSIC_CATCH_KEY = "sounds/ballCatch.mp3",
 			MUSIC_EXPLO_KEY = "sounds/explosion.wav",
 			MUSIC_INTRO_KEY = "sounds/intro.wav",

@@ -170,8 +170,8 @@ public class GameStage extends Stage implements ContactListener {
 	public boolean keyDown(int keycode) {
 		if (keycode == Input.Keys.BACK) {
 			game.back();
-
 			// TODO: add pause while state
+			return true;
 		}
 		return false;
 	}
@@ -500,6 +500,7 @@ public class GameStage extends Stage implements ContactListener {
 	enum gameState {
 		RUNNING,
 		LEVEL_UP,
+		PAUSE,
 		OVER
 	}
 }
