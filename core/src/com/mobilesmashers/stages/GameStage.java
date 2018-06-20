@@ -378,7 +378,7 @@ public class GameStage extends Stage implements ContactListener {
 
 		Gdx.input.setInputProcessor(this);
 
-		World.setVelocityThreshold(0.8f);
+		World.setVelocityThreshold(0f);
 	}
 
 	private void initFields() {
