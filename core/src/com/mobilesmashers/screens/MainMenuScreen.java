@@ -1,6 +1,5 @@
 package com.mobilesmashers.screens;
 
-import com.badlogic.gdx.graphics.Color;
 import com.mobilesmashers.MobileSmashers;
 import com.mobilesmashers.actors.Text;
 import com.mobilesmashers.utils.AudioUtils;
@@ -62,7 +61,7 @@ public class MainMenuScreen extends MenuScreen {
 				4.6f * Constants.APP_WIDTH / 6f,
 				Constants.APP_HEIGHT / 6f,
 				null,
-				Color.ORANGE,
+				Constants.TEXT_COLOR,
 				3f
 		);
 		texts.add(volumeLabel);

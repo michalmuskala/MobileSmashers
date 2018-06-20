@@ -69,7 +69,7 @@ public abstract class MenuScreen extends ScreenAdapter implements InputProcessor
 	public boolean keyDown(int keycode) {
 		if (keycode == Input.Keys.BACK)
 			Gdx.app.exit();
-		return false;
+		return true;
 	}
 
 	@Override

@@ -12,7 +12,7 @@ public final class Constants {
 	public static final int
 			APP_WIDTH = Gdx.graphics.getWidth(),
 			APP_HEIGHT = Gdx.graphics.getHeight(),
-			DEFAULT_VOLUME = 100,
+			DEFAULT_VOLUME = 50,
 			POS_ITERS = 2,
 			ROPE_THICKNESS_PX = 7,
 			TASK_PARITY_MAX = 200,
@@ -75,6 +75,7 @@ public final class Constants {
 			MUSIC_LSHOT_KEY = "sounds/lineBack.mp3",
 			MUSIC_SHOOT_KEY = "sounds/lineShoot.mp3",
 			MUSIC_SUCCE_KEY = "sounds/success.wav",
+			TEXTURE_ADDITION_KEY = "pictures/addition.png",
 			TEXTURE_BACK_KEY = "pictures/background.png",
 			TEXTURE_BALL_KEY = "ball",
 			TEXTURE_EXPL_KEY = "explosion",
@@ -83,11 +84,13 @@ public final class Constants {
 			TEXTURE_INFO_KEY = "pictures/info.png",
 			TEXTURE_LOGO_KEY = "pictures/logo.png",
 			TEXTURE_MENU_KEY = "pictures/menu.png",
+			TEXTURE_PARITY_KEY = "pictures/parity.png",
 			TEXTURE_PLAY_KEY = "pictures/play.png",
 			TEXTURE_PLER_KEY = "player",
 			TEXTURE_ROPE_KEY = "rope",
 			TEXTURE_SNON_KEY = "pictures/sound_on.png",
 			TEXTURE_SOFF_KEY = "pictures/sound_off.png",
+			TEXTURE_TILT_KEY = "pictures/info/tiltPhone.png",
 			TEXTURE_WALL_KEY = "wall";
 
 	public static final String[]
@@ -100,11 +103,13 @@ public final class Constants {
 					MUSIC_SUCCE_KEY
 			},
 			TEXTURE_PATHS = {
+					TEXTURE_ADDITION_KEY,
 					TEXTURE_BACK_KEY,
 					TEXTURE_GOVR_KEY,
 					TEXTURE_INFO_KEY,
 					TEXTURE_LOGO_KEY,
 					TEXTURE_MENU_KEY,
+					TEXTURE_PARITY_KEY,
 					TEXTURE_PLAY_KEY,
 					TEXTURE_SNON_KEY,
 					TEXTURE_SOFF_KEY

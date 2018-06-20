@@ -29,7 +29,7 @@ public class Text extends Actor {
 
 	@Override
 	public void draw(Batch batch, float parentAlpha) {
-		bitmapFont.draw(batch, text, getX(), getY());
+		bitmapFont.draw(batch, text, getX() - 35, getY() +20); // FIXME: well, this is just bad
 	}
 
 	public String getText() {
@@ -38,5 +38,10 @@ public class Text extends Actor {
 
 	public void setText(String text) {
 		this.text = text;
+	}
+
+	public BitmapFont getBitmapFont()
+	{
+		return bitmapFont;
 	}
 }
