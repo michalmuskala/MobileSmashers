@@ -79,6 +79,7 @@ public final class Constants {
 			MUSIC_SUCCE_KEY = "sounds/success.wav",
 			TEXTURE_ADDITION_KEY = "pictures/addition.png",
 			TEXTURE_BACK_KEY = "pictures/background.png",
+			TEXTURE_BACKGROUND_KEY = "pictures/grayBackground.jpg",
 			TEXTURE_BALL_KEY = "ball",
 			TEXTURE_EXPL_KEY = "explosion",
 			TEXTURE_GOVR_KEY = "pictures/gameOver.png",
@@ -109,6 +110,7 @@ public final class Constants {
 			TEXTURE_PATHS = {
 					TEXTURE_ADDITION_KEY,
 					TEXTURE_BACK_KEY,
+					TEXTURE_BACKGROUND_KEY,
 					TEXTURE_GOVR_KEY,
 					TEXTURE_INFO_KEY,
 					TEXTURE_LOGO_KEY,

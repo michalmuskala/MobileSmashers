@@ -7,6 +7,7 @@ import com.mobilesmashers.utils.Constants;
 import com.mobilesmashers.utils.Dimensions;
 import com.mobilesmashers.utils.TextureUtils;
 
+import static com.mobilesmashers.utils.Constants.TEXTURE_BACKGROUND_KEY;
 import static com.mobilesmashers.utils.Constants.TEXTURE_BACK_KEY;
 import static com.mobilesmashers.utils.Constants.TEXTURE_INFO_KEY;
 import static com.mobilesmashers.utils.Constants.TEXTURE_LOGO_KEY;
@@ -28,8 +29,10 @@ public class MainMenuScreen extends MenuScreen {
 	}
 
 	private void createDrawables() {
-		drawables.add(new Drawable(TextureUtils.get(TEXTURE_BACK_KEY),
-				0, 0, Constants.APP_WIDTH, Constants.APP_HEIGHT));
+		//drawables.add(new Drawable(TextureUtils.get(TEXTURE_BACK_KEY),
+		//		0, 0, Constants.APP_WIDTH, Constants.APP_HEIGHT));
+		drawables.add(new Drawable(TextureUtils.get(TEXTURE_BACKGROUND_KEY),
+						0, 0, Constants.APP_WIDTH, Constants.APP_HEIGHT));
 		drawables.add(new Drawable(TextureUtils.get(TEXTURE_LOGO_KEY),
 				Dimensions.logoBegX, Dimensions.logoBegY,
 				Dimensions.logoHeight, Dimensions.logoWidth));
