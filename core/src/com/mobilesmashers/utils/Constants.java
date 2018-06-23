@@ -62,7 +62,7 @@ public final class Constants {
 			WALL_COLOR = Color.YELLOW;
 
 	public static final Vector2
-			BALL_MAX_INIT_SPEED = new Vector2(2f, 2f),
+			BALL_MAX_INIT_SPEED = new Vector2(10f, 10f),
 			GRAVITY = new Vector2(0f, 0f),
 			PLAYER_SIZE = new Vector2(.3f, .5f),
 			PLAYER_START_POS = WorldUtils.world_center(PLAYER_SIZE.x, PLAYER_SIZE.y);
