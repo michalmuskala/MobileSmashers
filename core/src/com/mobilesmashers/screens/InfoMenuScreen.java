@@ -30,20 +30,20 @@ public class InfoMenuScreen extends MenuScreen {
 				Dimensions.infoBegX, Dimensions.logoBegY + 100,
 				Dimensions.infoHeight, Dimensions.infoWidth));
 
-		drawables.add(new Drawable(TextureUtils.get(TEXTURE_ADDITION_KEY),
+		/*drawables.add(new Drawable(TextureUtils.get(TEXTURE_ADDITION_KEY),
 				Dimensions.additionBegX, Dimensions.additionBegY,
 				Dimensions.additionHeight, Dimensions.additionWidth));
 
 		drawables.add(new Drawable(TextureUtils.get(TEXTURE_PARITY_KEY),
 				Dimensions.parityBegX, Dimensions.parityBegY,
-				Dimensions.parityHeight, Dimensions.parityWidth));
+				Dimensions.parityHeight, Dimensions.parityWidth));*/
 
 	}
 
 	private void createTexts() {
 		Text foobar = new Text(Dimensions.movingPlayerInfoBegX,
 				Dimensions.movingPlayerInfoBegY,
-				Eng_lang.INFO_GOAL_KEY,
+				Eng_lang.INFO_AUTHORS_KEY,
 				Constants.TEXT_COLOR,
 				3);
 
@@ -52,6 +52,30 @@ public class InfoMenuScreen extends MenuScreen {
 		int width = (int) layout.width;
 
 		texts.add(new Text(
+				Dimensions.movingPlayerInfoBegX + 40 - width / 2,
+				Dimensions.movingPlayerInfoBegY,
+				Eng_lang.INFO_AUTHORS_KEY,
+				Constants.TEXT_COLOR,
+				3f
+		));
+
+		texts.add(new Text(
+				Dimensions.movingPlayerInfoBegX + 40 - width / 2,
+				Dimensions.movingPlayerInfoBegY - 50,
+				Eng_lang.INFO_FIRSTAUTHOR_KEY,
+				Constants.TEXT_COLOR,
+				3f
+		));
+
+		texts.add(new Text(
+				Dimensions.movingPlayerInfoBegX + 40 - width / 2,
+				Dimensions.movingPlayerInfoBegY - 100,
+				Eng_lang.INFO_SECONDAUTHOR_KEY,
+				Constants.TEXT_COLOR,
+				3f
+		));
+
+		/*texts.add(new Text(
 				Dimensions.movingPlayerInfoBegX + 40 - width / 2,
 				Dimensions.movingPlayerInfoBegY,
 				Eng_lang.INFO_PLAYERS_MOVE_KEY,
@@ -73,7 +97,7 @@ public class InfoMenuScreen extends MenuScreen {
 				Eng_lang.INFO_CATCH_KEY,
 				Constants.TEXT_COLOR,
 				3f
-		));
+		));*/
 	}
 
 	@Override
