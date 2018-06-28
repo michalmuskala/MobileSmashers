@@ -108,10 +108,11 @@ public class GameStage extends Stage implements ContactListener {
 
 	c1.
 	nowe:
-	actors/Announcement.java (new)
+	actors/Announcement.java
 	zmodyfikowane:
-	GameStage: GameStage() (modified)
-	GameStage: Act() (modified)
+	GameStage: nowe pole announcer (zaraz po tym komentarzu)
+	GameStage: GameStage()
+	GameStage: Act()
 
 	c2.
 	nowe:
