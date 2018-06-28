@@ -2,6 +2,7 @@ package com.mobilesmashers;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.mobilesmashers.screens.AuthorsMenuScreen;
 import com.mobilesmashers.screens.GameScreen;
 import com.mobilesmashers.screens.InfoMenuScreen;
 import com.mobilesmashers.screens.MainMenuScreen;
@@ -43,7 +44,7 @@ public class MobileSmashers extends Game {
 
 	public void info() {
 		screen.dispose();
-		setScreen(new InfoMenuScreen(this));
+		setScreen(new AuthorsMenuScreen(this));
 	}
 
 	public void back() {

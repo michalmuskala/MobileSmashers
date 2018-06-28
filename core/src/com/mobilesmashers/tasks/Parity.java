@@ -5,6 +5,8 @@ import com.mobilesmashers.utils.RandomUtils;
 
 public class Parity extends Task {
 
+	public static boolean nextParity = false; // false: odd, true: even
+
 	public static Task[] createTask() {
 
 		Parity[] result = new Parity[2];
@@ -12,8 +14,15 @@ public class Parity extends Task {
 		result[0] = new Parity();
 		result[1] = new Parity();
 
-		if (result[1].isMatch(result[0]) == match.BAD_MATCH)
-			result[1].value += 1;
+		if ((result[0].value % 2 == 1 && nextParity) ||
+				(result[0].value % 2 == 0 && !nextParity))
+			result[0].value += 1;
+
+		nextParity = !nextParity;
+
+
+			if (result[1].isMatch(result[0]) == match.BAD_MATCH)
+				result[1].value += 1;
 
 		return result;
 	}

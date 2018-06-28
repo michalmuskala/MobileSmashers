@@ -47,6 +47,7 @@ public final class Constants {
 			PLAYER_DENSITY = 1f,
 			PLAYER_FRICTION = 0f,
 			PLAYER_RESTITUTION = 0f,
+			SUPER_EXPLOSION_RADIUS_DELTA = .4f,
 			TIME_STEP = 1f / 30f,
 			WALL_DENSITY = 0f,
 			WALL_DIM = .05f;
@@ -62,6 +63,7 @@ public final class Constants {
 			WALL_COLOR = Color.YELLOW;
 
 	public static final Vector2
+			BALL_MIN_INIT_SPEED = new Vector2(1f, 1f),
 			BALL_MAX_INIT_SPEED = new Vector2(2f, 2f),
 			GRAVITY = new Vector2(0f, 0f),
 			PLAYER_SIZE = new Vector2(.3f, .5f),

@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import com.mobilesmashers.MobileSmashers;
+import com.mobilesmashers.actors.Announcement;
 import com.mobilesmashers.actors.CircleDynamicBody;
 import com.mobilesmashers.actors.Explosion;
 import com.mobilesmashers.actors.GameActor;
@@ -22,6 +23,7 @@ import com.mobilesmashers.actors.GameBody;
 import com.mobilesmashers.actors.Hook;
 import com.mobilesmashers.actors.Player;
 import com.mobilesmashers.actors.Rope;
+import com.mobilesmashers.actors.SuperExplosion;
 import com.mobilesmashers.actors.TaskBall;
 import com.mobilesmashers.actors.Text;
 import com.mobilesmashers.actors.Wall;
@@ -30,6 +32,7 @@ import com.mobilesmashers.tasks.Parity;
 import com.mobilesmashers.tasks.Task;
 import com.mobilesmashers.utils.AudioUtils;
 import com.mobilesmashers.utils.Constants;
+import com.mobilesmashers.utils.RandomUtils;
 import com.mobilesmashers.utils.TextureUtils;
 import com.mobilesmashers.utils.WorldUtils;
 
@@ -38,6 +41,7 @@ import java.util.List;
 
 import static com.mobilesmashers.utils.Constants.BALL_MAX_INIT_SPEED;
 import static com.mobilesmashers.utils.Constants.BALL_MIN_DST_FROM_PLAYER;
+import static com.mobilesmashers.utils.Constants.BALL_MIN_INIT_SPEED;
 import static com.mobilesmashers.utils.Constants.BALL_RADIUS;
 import static com.mobilesmashers.utils.Constants.FLAT_WALLS_DIM;
 import static com.mobilesmashers.utils.Constants.HOOK_SPAWN_DISTANCE;
@@ -63,7 +67,7 @@ import static com.mobilesmashers.utils.WorldUtils.vectorAngle;
 
 public class GameStage extends Stage implements ContactListener {
 
-	private gameState state;
+	private GameState state;
 	private int level;
 	private float accumulator;
 	private MobileSmashers game;
@@ -75,6 +79,60 @@ public class GameStage extends Stage implements ContactListener {
 	private List<GameBody> toRemove;
 	private List<Rope> toFuse; // FIXME: consider using single List<Rope> instead of tiedActors and toFuse arrays
 
+	/*
+		a) łatwe
+		1. Zmień kolor piłek
+		2. Zamień tło w głównym menu
+		3. Zrób, żeby gra zaczynała się cały czas tak samo
+
+		b) średnie
+		1. Zablokuj tworzenie nowych hooków po przegraniu
+		2. Wymuś naprzemienne tworzenie piłek z liczbami parzystymi i nieparzystymi
+		3. Zmień prędkość startową piłek
+
+		c) trudne
+		1. Dodaj napis wprowadzający w nowy poziom
+		2. Zaimplementuj super eksplozję (gdy gracz połączy złe piłki)
+		3. Zamień ekran informacji w ekran z autorami
+
+	a1. Constants.java: stała BALL_COLOR
+	a2. Podmienić plik tła lub wygenerować funkcją TextureUtils.createRect() (trudniejsze)
+	a3. GameStage: GameStage()
+	b1. shoot() - zwróć (nie wykonuj), jeżeli stan gry nie jest RUNNING
+	b2. tasks/Parity.java: nowe pole statyczne, zmdodyfikować metodę createTask()
+
+
+	b3.
+	Constants: stałe BALL_MIN_INIT_SPEED, BALL_MAX_INIT_SPEED.
+	GameStage: createParityTasks()
+
+	c1.
+	nowe:
+	actors/Announcement.java (new)
+	zmodyfikowane:
+	GameStage: GameStage() (modified)
+	GameStage: Act() (modified)
+
+	c2.
+	nowe:
+	GameStage: superExplode()
+	actors/SuperExplosion.java
+	zmodyfikowane:
+	GameStage: beginContact()
+	actors/Explosion.java
+	utils/Constants.java
+
+	c3.
+	nowe:
+	screens/AuthorsMenuScreen.java
+	zmodyfikoawne:
+	utils/Eng_lang.java
+	utils/MobileSmashers.java
+
+	 */
+
+	private Announcement announcer = new Announcement();
+
 	public GameStage(MobileSmashers game) {
 		super(new ScalingViewport(
 				Scaling.stretch,
@@ -85,6 +143,11 @@ public class GameStage extends Stage implements ContactListener {
 
 		this.game = game;
 
+		/* a3 */
+		final long SEED = 100;
+		RandomUtils.reset(SEED);
+		/* ** */
+
 		createWorld();
 		initClasses();
 		initFields();
@@ -93,6 +156,11 @@ public class GameStage extends Stage implements ContactListener {
 		//createAdditionTasks();
 		createWalls();
 		playIntroMusic();
+
+		/* c1 */
+		addActor(announcer);
+		announcer.make(3f, "Level " + level);
+		/* ** */
 	}
 
 	/* STAGE */
@@ -103,7 +171,7 @@ public class GameStage extends Stage implements ContactListener {
 
 		accumulator += frameTime;
 		while (accumulator >= TIME_STEP) {
-			if (state != gameState.OVER) {
+			if (state != GameState.OVER) {
 				world.step(TIME_STEP, Constants.VEL_ITERS, Constants.POS_ITERS);
 			} else if (explosion != null && explosion.getWidth() < 0) {
 				explosion.remove();
@@ -121,11 +189,13 @@ public class GameStage extends Stage implements ContactListener {
 				AudioUtils.play(Constants.MUSIC_GOVER_KEY);
 			}
 
-			if (state == gameState.LEVEL_UP) {
+			if (state == GameState.LEVEL_UP) {
 				createParityTasks();
-				state = gameState.RUNNING;
+				state = GameState.RUNNING;
 				player.setRopeNumber(level + 1);
 				AudioUtils.play(MUSIC_SUCCE_KEY);
+
+				announcer.make(5f, "level " + level);
 			}
 
 			super.act(frameTime);
@@ -223,7 +293,7 @@ public class GameStage extends Stage implements ContactListener {
 
 		// TODO: add player hook catching
 		if (aClass == Hook.class || bClass == Hook.class) {
-			if ((aClass == TaskBall.class || bClass == TaskBall.class))
+			if (aClass == TaskBall.class || bClass == TaskBall.class)
 				tie(a, b);
 		} else if (aClass == TaskBall.class && bClass == TaskBall.class) {
 			TaskBall
@@ -240,20 +310,20 @@ public class GameStage extends Stage implements ContactListener {
 				taskBalls.remove(taskBallB); // taskBalls is needed so the game knows when new level starts. FIXME: this solution sucks
 
 				if (taskBallA.match(taskBallB) == Task.match.BAD_MATCH) {
-					state = gameState.OVER;
-					explode(a, b);
+					state = GameState.OVER;
+					superExplode(a, b);
 				} else if (taskBallA.match(taskBallB) == Task.match.NO_MATCH) { // TODO: when linking multiple balls will be supported
-					state = gameState.OVER;
+					state = GameState.OVER;
 					explode(a, b);
 				} else if (taskBalls.size() == 0) {
 					level += 1;
-					state = gameState.LEVEL_UP;
+					state = GameState.LEVEL_UP;
 				}
 			}
 		} else if (a == player || b == player) {
 			if (aClass == TaskBall.class
 					|| bClass == TaskBall.class) {
-				state = gameState.OVER;
+				state = GameState.OVER;
 				explode(a, b);
 			}
 		}
@@ -298,7 +368,53 @@ public class GameStage extends Stage implements ContactListener {
 		startFusion(rope);
 	}
 
+	private void regainHook(Hook hook) {
+		final float MIN_CATCH_WAIT = 3f;
+
+		/*
+		if(catchTimer < MIN_CATCH_WAIT)
+			return;
+		*/
+
+		Rope rope = hook.getRope();
+
+		Object
+				head = rope.getHead(),
+				tail = rope.getTail();
+		Class
+			headClass = head.getClass(),
+			tailClass = tail.getClass();
+
+		//hook.remove();
+
+		if(head == player || tail == player) {
+			hook.remove();
+			rope.remove();
+			player.rope = null;
+			player.ropeNumber += 1;
+			toRemove.add(hook);
+			tiedActors.remove(player);
+		} else if(headClass == TaskBall.class || tailClass == TaskBall.class) {
+			if(player.rope != null)
+				return;
+			hook.remove();
+			player.rope = rope;
+			toRemove.add(hook);
+			tiedActors.add(player);
+		} else {
+			if(player.rope != null)
+				return;
+			hook.remove();
+			player.rope = rope;
+			toRemove.add(hook);
+			tiedActors.add(player);
+		}
+	}
+
 	private void shoot(float dirX, float dirY) {
+		if(state != GameState.RUNNING)
+			return;
+
 		Vector2
 				pos = player.getBodyPosition(),
 				vel = player.getLinearVelocity();
@@ -364,6 +480,16 @@ public class GameStage extends Stage implements ContactListener {
 		AudioUtils.play(Constants.MUSIC_EXPLO_KEY);
 	}
 
+	private void superExplode(Object a, Object b) {
+		explosion = new SuperExplosion(
+				Constants.SUPER_EXPLOSION_RADIUS_DELTA,
+				a.getClass() == TaskBall.class ? (TaskBall) a : (TaskBall) b,
+				TextureUtils.get(Constants.TEXTURE_EXPL_KEY)
+		);
+		addActor(explosion);
+		AudioUtils.play(Constants.MUSIC_EXPLO_KEY);
+	}
+
 	// init
 
 	private void createWorld() {
@@ -382,7 +508,7 @@ public class GameStage extends Stage implements ContactListener {
 	}
 
 	private void initFields() {
-		state = gameState.RUNNING;
+		state = GameState.RUNNING;
 		level = 1;
 		accumulator = 0;
 		taskBalls = new ArrayList<TaskBall>();
@@ -419,8 +545,8 @@ public class GameStage extends Stage implements ContactListener {
 				TaskBall ball = new TaskBall(world, posX, posY, BALL_RADIUS, tasks[j],
 						TextureUtils.get(TEXTURE_BALL_KEY));
 				ball.setLinearVelocity(
-						nextFloat(BALL_MAX_INIT_SPEED.x),
-						nextFloat(BALL_MAX_INIT_SPEED.y)
+						nextFloat(BALL_MIN_INIT_SPEED.x, BALL_MAX_INIT_SPEED.x),
+						nextFloat(BALL_MIN_INIT_SPEED.y, BALL_MAX_INIT_SPEED.y)
 				);
 				taskBalls.add(ball);
 				addActor(ball);
@@ -501,7 +627,7 @@ public class GameStage extends Stage implements ContactListener {
 
 	// classes
 
-	enum gameState {
+	enum GameState {
 		RUNNING,
 		LEVEL_UP,
 		PAUSE,

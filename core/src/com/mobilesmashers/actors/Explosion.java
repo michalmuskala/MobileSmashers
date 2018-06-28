@@ -7,14 +7,14 @@ import static com.mobilesmashers.utils.WorldUtils.met_to_pix;
 
 public class Explosion extends GameActor {
 
-	private boolean expanding;
+	protected boolean expanding;
 
-	private float
+	protected float
 			max_radiusPx,
 			delta_diameterPx,
 			implosion_factor;
 
-	private Actor
+	protected Actor
 			exploding,
 			exploded;
 
